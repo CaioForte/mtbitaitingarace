@@ -1,0 +1,32 @@
+INTEGRAÇÃO DEFINITIVA SITE + PAINEL ADM
+
+O problema encontrado é este:
+- o site antigo usa um Apps Script próprio com PLANILHA_ID = 1AWB8...
+- o Painel ADM usa SpreadsheetApp.getActiveSpreadsheet(), portanto está ligado a OUTRA planilha.
+
+Nesta versão, o site passa a chamar o Web App do Painel ADM:
+AKfycbzBL3zWUZLpSDvR_Oomuk50_3YkfEWb_WlwhALZAO1d3BbXOvPAE64gHwZ8SiTVAyHf
+
+Para finalizar a integração, o bloco ADICIONAR_AO_CODE_GS_DO_ADM.js precisa ser adicionado ao Code.gs do Painel ADM e as duas rotas abaixo precisam ser adicionadas aos switches existentes.
+
+NO doGet(e), dentro do switch(action), antes de default:
+
+case 'publicConsultar':
+  return resposta_(true, publicConsultarInscricao_(params.cpf));
+
+case 'publicCategorias':
+  return resposta_(true, publicObterCategorias_());
+
+NO doPost(e), dentro do switch(action), antes de default:
+
+case 'publicCadastrar':
+  return resposta_(true, publicCadastrarInscricao_(body));
+
+Depois:
+1. Salve o Code.gs do ADM.
+2. Implante uma NOVA VERSÃO do Web App do ADM.
+3. O acesso deve continuar como "Qualquer pessoa" / execução como você (conforme já usado pelo painel).
+4. Substitua os arquivos do site pelo ZIP desta pasta.
+
+Não é para criar outra planilha.
+A consulta, categorias e novas inscrições passam a usar exatamente SpreadsheetApp.getActiveSpreadsheet() do projeto do Painel ADM.

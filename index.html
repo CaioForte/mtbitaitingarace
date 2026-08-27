@@ -582,11 +582,6 @@
             </div>
 
             <div class="form-group">
-              <label for="nascimento">Data de nascimento *</label>
-              <input type="date" id="nascimento" name="nascimento" required>
-            </div>
-
-            <div class="form-group">
               <label for="email">E-mail *</label>
               <input type="email" id="email" name="email" placeholder="seuemail@email.com" required>
             </div>
@@ -597,27 +592,15 @@
             </div>
 
             <div class="form-group">
-              <label for="cidade">Cidade *</label>
-              <input type="text" id="cidade" name="cidade" placeholder="Sua cidade" required>
-            </div>
-
-            <div class="form-group">
               <label for="categoria">Categoria *</label>
-              <select id="categoria" name="categoria" required>
-                <option value="">Selecione sua categoria</option>
-                <option value="elite-masculino">Elite Masculino</option>
-                <option value="elite-feminino">Elite Feminino</option>
-                <option value="master-masculino">Master Masculino</option>
-                <option value="master-feminino">Master Feminino</option>
-                <option value="duplas-masculino">Duplas Masculino</option>
-                <option value="duplas-mista">Duplas Mista</option>
+              <select id="categoria" name="categoria" required disabled>
+                <option value="">CARREGANDO CATEGORIAS...</option>
               </select>
             </div>
 
-            <div class="form-group full">
-              <label for="contato-emergencia">Contato de emergência *</label>
-              <input type="text" id="contato-emergencia" name="contato_emergencia"
-                     placeholder="Nome + telefone do contato de emergência" required>
+            <div class="form-group">
+              <label for="valor">Valor</label>
+              <input type="text" id="valor" name="valor" value="R$ 0,00" readonly>
             </div>
 
             <div class="form-check full">
@@ -635,14 +618,14 @@
           </button>
 
           <p class="form-disclaimer">
-            * Campos obrigatórios. Nesta versão de teste, o envio é apenas demonstrativo.
+            * Campos obrigatórios. O valor da inscrição é definido pela categoria cadastrada pela organização.
           </p>
 
           <div class="form-success" id="formSuccess" hidden>
             <strong>INSCRIÇÃO RECEBIDA!</strong>
             <span>
-              O formulário foi preenchido corretamente. O envio real será
-              conectado quando definirmos o sistema de inscrições.
+              Sua inscrição foi registrada. O pagamento ficará pendente até a
+              organização receber e validar o comprovante.
             </span>
           </div>
 

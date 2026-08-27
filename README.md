@@ -1,82 +1,64 @@
-# Itaitinga MTB Race — Site + Inscrições
+# Itaitinga MTB Race — Site Público + Inscrições
 
-## Novidades desta versão
+## Compatibilidade com o Painel Administrativo
 
-- Formulário de inscrição conectado ao Google Apps Script.
-- Número de inscrição automático.
-- Colunas separadas de `Pagamento` e `Inscrição`.
-- Consulta pública por CPF.
-- Consulta pública retorna somente número, nome, categoria e status.
-- Se `Inscrição` estiver `Confirmado`, o botão de WhatsApp não aparece.
-- Se estiver `Pendente`, aparece o botão de confirmação pelo WhatsApp.
-- O número oficial do WhatsApp deve ser configurado em `js/main.js`.
+Esta versão do site público foi ajustada para usar a estrutura atual da planilha utilizada pelo Painel ADM.
 
-## Importante: atualizar o Apps Script
+### Aba Inscrições
 
-O arquivo `google-apps-script/Code.gs` contém a versão nova do Apps Script.
+A estrutura esperada é:
 
-Na sua planilha:
-1. Extensões → Apps Script.
-2. Substitua o código atual pelo conteúdo de `google-apps-script/Code.gs`.
-3. Salve.
-4. Implante uma nova versão da implantação existente.
-5. Mantenha `Executar como: Eu` e `Quem pode acessar: Qualquer pessoa`.
+1. NumeroInscricao
+2. Nome
+3. CPF
+4. Email
+5. Telefone
+6. Categoria
+7. Pagamento
+8. StatusInscricao
+9. Valor
+10. DataInscricao
+11. Observacao
 
-A URL `/exec` continua sendo usada pelo site.
+A inscrição pública sempre inicia com:
 
-## Colunas da planilha
+- Pagamento = Pendente
+- StatusInscricao = Pendente
 
-A estrutura final é:
+O valor é obtido automaticamente da categoria cadastrada no painel.
 
-1. Nº Inscrição
-2. Data/Hora
-3. Nome Completo
-4. CPF
-5. Data de Nascimento
-6. E-mail
-7. WhatsApp
-8. Cidade
-9. Categoria
-10. Contato de Emergência
-11. Pagamento
-12. Inscrição
+### Aba Configurações
 
-### Controle manual
+O site lê a configuração `Categorias` da aba `Configurações`.
 
-A organização pode alterar manualmente:
+Formato esperado:
 
-- `Pagamento`: Pendente / Recebido
-- `Inscrição`: Pendente / Confirmado / Cancelado
+`[{"nome":"Elite Masculino","valor":80},{"nome":"Elite Feminino","valor":80}]`
 
-A consulta pública usa a coluna `Inscrição`.
+Assim, quando uma categoria ou valor for alterado no painel, o formulário público passa a usar a configuração atual da planilha.
 
-## WhatsApp
+### Dados adicionais
 
-No `js/main.js`, procure:
+A nova estrutura da aba Inscrições não possui colunas separadas para:
 
-`const WHATSAPP_INSCRICOES = "";`
+- Data de nascimento
+- Cidade
+- Contato de emergência
 
-Coloque somente o número oficial com DDI e DDD, sem `+`, espaços, parênteses ou hífen.
+Esses dados continuam sendo recebidos pelo formulário e são gravados no campo `Observacao`, preservando a lógica do formulário sem criar novas colunas.
 
-Exemplo:
+## Apps Script
 
-`const WHATSAPP_INSCRICOES = "5585999999999";`
+Substitua o código do projeto público pelo arquivo:
 
-O site monta a mensagem automaticamente.
+`google-apps-script/Code.gs`
+
+Depois publique uma nova versão da implantação do Web App.
+
+A URL usada pelo site continua configurada em:
+
+`js/main.js`
 
 
-## Regra atual de exibição do WhatsApp
-
-O botão só aparece quando o campo `Pagamento` estiver pendente.
-
-- `Pagamento = Pendente` + `Inscrição = Pendente` → mostra WhatsApp.
-- `Pagamento = Pago/Recebido` + `Inscrição = Pendente` → não mostra WhatsApp; informa que o pagamento foi confirmado.
-- `Inscrição = Confirmado` → não mostra WhatsApp; informa inscrição confirmada.
-- `Inscrição = Cancelado` → não mostra WhatsApp.
-
-
-## CPF duplicado
-
-Ao tentar cadastrar um CPF já existente, o formulário informa que o CPF já possui
-uma inscrição e apresenta o botão `CONSULTAR MINHA INSCRIÇÃO`. O botão leva o atleta
-para a consulta e já preenche o CPF automaticamente.
+## Integração com o Painel ADM
+O formulário público usa os mesmos campos do cadastro do Painel ADM: nome, CPF, categoria, e-mail e WhatsApp. Pagamento e status são criados como Pendente. O valor é calculado no Apps Script a partir da categoria cadastrada na aba Configurações.
