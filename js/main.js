@@ -720,32 +720,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const dados = {
 
-          nome:
-            document.getElementById(
-              "nome"
-            )?.value.trim() || "",
+  nome:
+    document.getElementById(
+      "nome"
+    )?.value.trim() || "",
 
-          cpf:
-            formatarCPF(cpf),
+  cpf:
+    formatarCPF(cpf),
 
-          email:
-            document.getElementById(
-              "email"
-            )?.value.trim() || "",
+  email:
+    document.getElementById(
+      "email"
+    )?.value.trim() || "",
 
-          telefone:
-            document.getElementById(
-              "telefone"
-            )?.value.trim() || "",
+  telefone:
+    document.getElementById(
+      "telefone"
+    )?.value.trim() || "",
 
-          categoria:
-            categoria
-        };
+  categoria:
+    categoria,
 
-        console.log(
-          "Enviando inscrição:",
-          dados
-        );
+  dataNascimento:
+    document.getElementById(
+      "dataNascimento"
+    )?.value || "",
+
+  estado:
+    document.getElementById(
+      "estado"
+    )?.value || "",
+
+  cidade:
+    document.getElementById(
+      "cidade"
+    )?.value || "",
+
+  pcd:
+    document.getElementById(
+      "pcd"
+    )?.value || "",
+
+  equipe:
+    document.getElementById(
+      "equipe"
+    )?.value.trim() || ""
+
+};
 
         // ----------------------------------------------
         // ENVIO PARA O GOOGLE APPS SCRIPT
@@ -754,13 +775,20 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
 
           const payload = {
-            action: "publicCadastrar",
-            nome: dados.nome,
-            cpf: dados.cpf,
-            email: dados.email,
-            telefone: dados.telefone,
-            categoria: dados.categoria
-          };
+  action: "publicCadastrar",
+
+  nome: dados.nome,
+  cpf: dados.cpf,
+  email: dados.email,
+  telefone: dados.telefone,
+  categoria: dados.categoria,
+
+  dataNascimento: dados.dataNascimento,
+  estado: dados.estado,
+  cidade: dados.cidade,
+  pcd: dados.pcd,
+  equipe: dados.equipe
+};
 
           const response =
             await fetch(
@@ -1433,6 +1461,37 @@ document.addEventListener("DOMContentLoaded", () => {
               resultado,
               "categoria"
             );
+			
+			const dataNascimento =
+  obterValor(
+    resultado,
+    "dataNascimento",
+    "data_nascimento"
+  );
+
+const estado =
+  obterValor(
+    resultado,
+    "estado"
+  );
+
+const cidade =
+  obterValor(
+    resultado,
+    "cidade"
+  );
+
+const pcd =
+  obterValor(
+    resultado,
+    "pcd"
+  );
+
+const equipe =
+  obterValor(
+    resultado,
+    "equipe"
+  );
 
           const pagamento =
             normalizarStatus(
@@ -1441,6 +1500,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 "pagamento"
               )
             );
+			
+			const dataNascimento =
+  obterValor(
+    resultado,
+    "dataNascimento",
+    "data_nascimento"
+  );
+
+const estado =
+  obterValor(
+    resultado,
+    "estado"
+  );
+
+const cidade =
+  obterValor(
+    resultado,
+    "cidade"
+  );
+
+const pcd =
+  obterValor(
+    resultado,
+    "pcd"
+  );
+
+const equipe =
+  obterValor(
+    resultado,
+    "equipe"
+  );
 
           const status =
             normalizarStatus(
@@ -1806,6 +1896,31 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById(
       "resultado-categoria"
     );
+
+	const resultadoDataNascimento =
+  document.getElementById(
+    "resultado-data-nascimento"
+  );
+
+const resultadoEstado =
+  document.getElementById(
+    "resultado-estado"
+  );
+
+const resultadoCidade =
+  document.getElementById(
+    "resultado-cidade"
+  );
+
+const resultadoPcd =
+  document.getElementById(
+    "resultado-pcd"
+  );
+
+const resultadoEquipe =
+  document.getElementById(
+    "resultado-equipe"
+  );
 
   const resultadoStatus =
     document.getElementById(
@@ -2174,6 +2289,36 @@ if (consultaForm) {
           resultadoCategoria.textContent =
             categoria || "—";
         }
+		
+		if (resultadoDataNascimento) {
+
+  resultadoDataNascimento.textContent =
+    dataNascimento || "—";
+}
+
+if (resultadoEstado) {
+
+  resultadoEstado.textContent =
+    estado || "—";
+}
+
+if (resultadoCidade) {
+
+  resultadoCidade.textContent =
+    cidade || "—";
+}
+
+if (resultadoPcd) {
+
+  resultadoPcd.textContent =
+    pcd || "—";
+}
+
+if (resultadoEquipe) {
+
+  resultadoEquipe.textContent =
+    equipe || "—";
+}
 
         const statusNormal =
           normalizarStatus(
@@ -2501,3 +2646,221 @@ if (consultaForm) {
 
   processarRetornoInfinitePay();
 });
+
+// ============================================================
+// IBGE - ESTADO → CIDADE
+// ============================================================
+
+const estadosIBGE = {
+  AC: "Acre",
+  AL: "Alagoas",
+  AP: "Amapá",
+  AM: "Amazonas",
+  BA: "Bahia",
+  CE: "Ceará",
+  DF: "Distrito Federal",
+  ES: "Espírito Santo",
+  GO: "Goiás",
+  MA: "Maranhão",
+  MT: "Mato Grosso",
+  MS: "Mato Grosso do Sul",
+  MG: "Minas Gerais",
+  PA: "Pará",
+  PB: "Paraíba",
+  PR: "Paraná",
+  PE: "Pernambuco",
+  PI: "Piauí",
+  RJ: "Rio de Janeiro",
+  RN: "Rio Grande do Norte",
+  RS: "Rio Grande do Sul",
+  RO: "Rondônia",
+  RR: "Roraima",
+  SC: "Santa Catarina",
+  SP: "São Paulo",
+  SE: "Sergipe",
+  TO: "Tocantins"
+};
+
+
+// ============================================================
+// CARREGAR ESTADOS
+// ============================================================
+
+function carregarEstadosIBGE() {
+
+  const estadoSelect =
+    document.getElementById("estado");
+
+  const cidadeSelect =
+    document.getElementById("cidade");
+
+  if (!estadoSelect || !cidadeSelect) {
+    return;
+  }
+
+
+  estadoSelect.innerHTML =
+    '<option value="">Selecione o estado</option>';
+
+  Object.entries(estadosIBGE)
+    .sort((a, b) =>
+      a[1].localeCompare(
+        b[1],
+        "pt-BR"
+      )
+    )
+    .forEach(([uf, nome]) => {
+
+      const option =
+        document.createElement("option");
+
+      option.value = uf;
+
+      option.textContent =
+        `${uf} - ${nome}`;
+
+      estadoSelect.appendChild(
+        option
+      );
+    });
+
+
+  cidadeSelect.innerHTML =
+    '<option value="">Selecione primeiro o estado</option>';
+
+  cidadeSelect.disabled = true;
+}
+
+
+// ============================================================
+// CARREGAR CIDADES DO IBGE
+// ============================================================
+
+async function carregarCidadesIBGE(uf) {
+
+  const cidadeSelect =
+    document.getElementById("cidade");
+
+  if (!cidadeSelect) {
+    return;
+  }
+
+
+  cidadeSelect.innerHTML =
+    '<option value="">Carregando cidades...</option>';
+
+  cidadeSelect.disabled = true;
+
+
+  if (!uf) {
+
+    cidadeSelect.innerHTML =
+      '<option value="">Selecione primeiro o estado</option>';
+
+    return;
+  }
+
+
+  try {
+
+    const url =
+      `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`;
+
+    const resposta =
+      await fetch(url);
+
+
+    if (!resposta.ok) {
+      throw new Error(
+        `HTTP ${resposta.status}`
+      );
+    }
+
+
+    const cidades =
+      await resposta.json();
+
+
+    cidadeSelect.innerHTML =
+      '<option value="">Selecione a cidade</option>';
+
+
+    cidades
+      .sort((a, b) =>
+        a.nome.localeCompare(
+          b.nome,
+          "pt-BR"
+        )
+      )
+      .forEach(cidade => {
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value =
+          cidade.nome;
+
+        option.textContent =
+          cidade.nome;
+
+        cidadeSelect.appendChild(
+          option
+        );
+      });
+
+
+    cidadeSelect.disabled =
+      false;
+
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao carregar cidades do IBGE:",
+      erro
+    );
+
+
+    cidadeSelect.innerHTML =
+      '<option value="">Não foi possível carregar as cidades</option>';
+
+    cidadeSelect.disabled =
+      true;
+  }
+}
+
+
+// ============================================================
+// EVENTOS ESTADO → CIDADE
+// ============================================================
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    const estadoSelect =
+      document.getElementById("estado");
+
+    if (!estadoSelect) {
+      return;
+    }
+
+
+    carregarEstadosIBGE();
+
+
+    estadoSelect.addEventListener(
+      "change",
+      () => {
+
+        const uf =
+          estadoSelect.value;
+
+        carregarCidadesIBGE(uf);
+      }
+    );
+
+  }
+);
