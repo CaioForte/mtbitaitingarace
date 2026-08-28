@@ -1500,37 +1500,6 @@ const equipe =
                 "pagamento"
               )
             );
-			
-			const dataNascimento =
-  obterValor(
-    resultado,
-    "dataNascimento",
-    "data_nascimento"
-  );
-
-const estado =
-  obterValor(
-    resultado,
-    "estado"
-  );
-
-const cidade =
-  obterValor(
-    resultado,
-    "cidade"
-  );
-
-const pcd =
-  obterValor(
-    resultado,
-    "pcd"
-  );
-
-const equipe =
-  obterValor(
-    resultado,
-    "equipe"
-  );
 
           const status =
             normalizarStatus(
