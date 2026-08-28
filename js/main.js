@@ -1,6 +1,6 @@
 // ============================================================
 // ITAITINGA MTB RACE - MAIN.JS
-// CORREÇÃO: integração com a mesma planilha/API do painel ADM
+// INTEGRAÇÃO COM GOOGLE SHEETS / APPS SCRIPT
 // ============================================================
 
 const GOOGLE_SCRIPT_URL =
@@ -93,15 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .toLowerCase();
   }
 
-  /*
-   * O Apps Script pode devolver:
-   *
-   * { sucesso:true, dados:{...} }
-   * { sucesso:true, ...dados }
-   * { encontrado:true, ...dados }
-   *
-   * Esta função aceita os três formatos.
-   */
   function extrairResultado(envelope) {
 
     if (
@@ -423,7 +414,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   // ----------------------------------------------------------
-  // CATEGORIAS DA MESMA API DO ADM
+  // CATEGORIAS
   // ----------------------------------------------------------
 
   const categoriaSelect =
@@ -513,9 +504,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!nome) return;
 
         const option =
-          document.createElement(
-            "option"
-          );
+          document.createElement("option");
 
         option.value = nome;
 
@@ -624,6 +613,10 @@ document.addEventListener("DOMContentLoaded", () => {
         ".btn-submit"
       );
 
+  // ----------------------------------------------------------
+  // ENVIO DA INSCRIÇÃO
+  // ----------------------------------------------------------
+
   if (registrationForm) {
 
     registrationForm.addEventListener(
@@ -631,6 +624,18 @@ document.addEventListener("DOMContentLoaded", () => {
       async event => {
 
         event.preventDefault();
+
+        // Evita duplo envio
+        if (
+          submitButton &&
+          submitButton.disabled
+        ) {
+          return;
+        }
+
+        // ----------------------------------------------
+        // VALIDAÇÃO DO FORMULÁRIO
+        // ----------------------------------------------
 
         if (
           !registrationForm.checkValidity()
@@ -642,15 +647,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const cpfCadastro =
-          document.getElementById(
-            "cpf"
+          document.getElementById("cpf");
+
+        const cpf =
+          somenteNumeros(
+            cpfCadastro?.value || ""
           );
 
         if (
           cpfCadastro &&
-          !cpfValido(
-            cpfCadastro.value
-          )
+          !cpfValido(cpf)
         ) {
 
           cpfCadastro.setCustomValidity(
@@ -682,9 +688,18 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
+        // ----------------------------------------------
+        // LIMPA MENSAGEM ANTERIOR
+        // ----------------------------------------------
+
         if (formSuccess) {
           formSuccess.hidden = true;
+          formSuccess.innerHTML = "";
         }
+
+        // ----------------------------------------------
+        // BOTÃO
+        // ----------------------------------------------
 
         const originalText =
           submitButton
@@ -693,12 +708,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (submitButton) {
 
-          submitButton.disabled =
-            true;
+          submitButton.disabled = true;
 
           submitButton.innerHTML =
             "ENVIANDO...";
         }
+
+        // ----------------------------------------------
+        // DADOS DA INSCRIÇÃO
+        // ----------------------------------------------
 
         const dados = {
 
@@ -707,13 +725,8 @@ document.addEventListener("DOMContentLoaded", () => {
               "nome"
             )?.value.trim() || "",
 
-          // IMPORTANTE:
-          // o site agora salva exatamente no
-          // mesmo padrão utilizado pelo ADM.
           cpf:
-            formatarCPF(
-              cpfCadastro?.value || ""
-            ),
+            formatarCPF(cpf),
 
           email:
             document.getElementById(
@@ -725,10 +738,29 @@ document.addEventListener("DOMContentLoaded", () => {
               "telefone"
             )?.value.trim() || "",
 
-          categoria
+          categoria:
+            categoria
         };
 
+        console.log(
+          "Enviando inscrição:",
+          dados
+        );
+
+        // ----------------------------------------------
+        // ENVIO PARA O GOOGLE APPS SCRIPT
+        // ----------------------------------------------
+
         try {
+
+          const payload = {
+            action: "publicCadastrar",
+            nome: dados.nome,
+            cpf: dados.cpf,
+            email: dados.email,
+            telefone: dados.telefone,
+            categoria: dados.categoria
+          };
 
           const response =
             await fetch(
@@ -742,178 +774,333 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
 
                 body:
-                  JSON.stringify({
-                    action:
-                      "publicCadastrar",
-                    ...dados
-                  })
+                  JSON.stringify(payload)
               }
             );
 
+          // --------------------------------------------
+          // VERIFICA RESPOSTA HTTP
+          // --------------------------------------------
+
           if (!response.ok) {
+
             throw new Error(
-              "Não foi possível enviar a inscrição."
+              "O servidor não conseguiu processar a inscrição."
             );
           }
 
-          const envelope =
-            await response.json();
+          // --------------------------------------------
+          // LÊ RESPOSTA DO APPS SCRIPT
+          // --------------------------------------------
+
+          let envelope;
+
+          try {
+
+            envelope =
+              await response.json();
+
+          } catch (jsonError) {
+
+            console.error(
+              "Resposta recebida não é JSON:",
+              jsonError
+            );
+
+            throw new Error(
+              "O servidor recebeu a inscrição, mas não retornou uma resposta válida."
+            );
+          }
+
+          console.log(
+            "Resposta do Apps Script:",
+            envelope
+          );
 
           const resultado =
             extrairResultado(
               envelope
             );
 
+          // --------------------------------------------
+          // IDENTIFICA SUCESSO
+          // --------------------------------------------
+
           const sucesso =
-            envelope.sucesso === true ||
-            resultado.sucesso === true;
+            envelope?.sucesso === true ||
+            resultado?.sucesso === true ||
+            envelope?.success === true ||
+            resultado?.success === true;
+
+          // --------------------------------------------
+          // IDENTIFICA DUPLICIDADE
+          // --------------------------------------------
 
           const duplicado =
-            resultado.cpf_existente === true ||
-            resultado.duplicado === true ||
-            resultado.cpfExistente === true;
+            resultado?.cpf_existente === true ||
+            resultado?.duplicado === true ||
+            resultado?.cpfExistente === true ||
+            resultado?.cpf_duplicado === true ||
+            envelope?.cpf_existente === true ||
+            envelope?.duplicado === true ||
+            envelope?.cpfExistente === true;
+
+          // --------------------------------------------
+          // CPF JÁ CADASTRADO
+          // --------------------------------------------
+
+          if (duplicado) {
+			  
+
+            if (formSuccess) {
+
+              const numero =
+                String(
+                  obterValor(
+                    resultado,
+                    "numero_inscricao",
+                    "numeroInscricao",
+                    "numero"
+                  ) ||
+                  obterValor(
+                    envelope,
+                    "numero_inscricao",
+                    "numeroInscricao",
+                    "numero"
+                  ) ||
+                  ""
+                ).padStart(3, "0");
+				
+              formSuccess.innerHTML = `
+                <strong>CPF JÁ CADASTRADO</strong>
+
+                <span>
+                  Encontramos uma inscrição para este CPF.
+                  Não é possível realizar uma segunda inscrição.
+                </span>
+
+                ${
+                  numero
+                    ? `
+                      <small>
+                        Inscrição encontrada:
+                        <strong>#${numero}</strong>
+                      </small>
+                    `
+                    : ""
+                }
+
+                <a
+                  class="btn btn-primary form-success-consultar"
+                  href="#consulta-inscricao"
+                >
+                  🔎 CONSULTAR MINHA INSCRIÇÃO
+                </a>
+              `;
+
+              formSuccess.hidden = false;
+
+              formSuccess
+                .querySelector(
+                  ".form-success-consultar"
+                )
+                ?.addEventListener(
+                  "click",
+                  event => {
+
+                    event.preventDefault();
+
+                    const consultaCpf =
+                      document.getElementById(
+                        "consulta-cpf"
+                      );
+
+                    if (consultaCpf) {
+
+                      consultaCpf.value =
+                        formatarCPF(
+                          dados.cpf
+                        );
+                    }
+
+                    document
+                      .getElementById(
+                        "consulta-inscricao"
+                      )
+                      ?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                      });
+                  }
+                );
+
+            }
+
+            return;
+          }
+
+          // --------------------------------------------
+          // SE NÃO FOI SUCESSO
+          // --------------------------------------------
 
           if (!sucesso) {
 
-            if (duplicado) {
-
-              if (formSuccess) {
-
-                const numero =
-                  String(
-                    obterValor(
-                      resultado,
-                      "numero_inscricao",
-                      "numeroInscricao",
-                      "numero"
-                    ) || ""
-                  ).padStart(3, "0");
-
-                formSuccess.innerHTML = `
-                  <strong>CPF JÁ CADASTRADO</strong>
-                  <span>
-                    Encontramos uma inscrição para este CPF.
-                    Não é possível realizar uma segunda inscrição.
-                  </span>
-
-                  <a
-                    class="btn btn-primary form-success-consultar"
-                    href="#consulta-inscricao"
-                  >
-                    🔎 CONSULTAR MINHA INSCRIÇÃO
-                  </a>
-
-                  ${
-                    numero
-                      ? `<small>Inscrição encontrada: <strong>#${numero}</strong></small>`
-                      : ""
-                  }
-                `;
-
-                formSuccess.hidden =
-                  false;
-
-                formSuccess
-                  .querySelector(
-                    ".form-success-consultar"
-                  )
-                  ?.addEventListener(
-                    "click",
-                    event => {
-
-                      event.preventDefault();
-
-                      if (consultaCpf) {
-                        consultaCpf.value =
-                          formatarCPF(
-                            dados.cpf
-                          );
-                      }
-
-                      document
-                        .getElementById(
-                          "consulta-inscricao"
-                        )
-                        ?.scrollIntoView({
-                          behavior: "smooth",
-                          block: "start"
-                        });
-                    }
-                  );
-              }
-
-              return;
-            }
+            const mensagem =
+              envelope?.mensagem ||
+              envelope?.message ||
+              resultado?.mensagem ||
+              resultado?.message ||
+              "Não foi possível realizar a inscrição.";
 
             throw new Error(
-              envelope.mensagem ||
-              resultado.mensagem ||
-              "Não foi possível realizar a inscrição."
+              mensagem
             );
           }
 
+          // --------------------------------------------
+          // INSCRIÇÃO REALIZADA COM SUCESSO
+          // --------------------------------------------
+
+          const numero =
+            String(
+              obterValor(
+                resultado,
+                "numero_inscricao",
+                "numeroInscricao",
+                "numero"
+              ) ||
+              obterValor(
+                envelope,
+                "numero_inscricao",
+                "numeroInscricao",
+                "numero"
+              ) ||
+              ""
+            ).padStart(3, "0");
+			
+			
+
+          // --------------------------------------------
+          // MENSAGEM WHATSAPP
+          // --------------------------------------------
+
+          const mensagem =
+            [
+              "Olá! Gostaria de confirmar minha inscrição no Itaitinga MTB Race XCP 2026.",
+              "",
+              "Inscrição: #" + numero,
+              "Nome: " + dados.nome,
+              "Categoria: " + dados.categoria
+            ].join("\n");
+
+          const linkWhatsapp =
+            WHATSAPP_INSCRICOES
+              ? "https://wa.me/" +
+                WHATSAPP_INSCRICOES +
+                "?text=" +
+                encodeURIComponent(
+                  mensagem
+                )
+              : "";
+			  
+			  const checkoutUrl =
+  obterValor(
+    resultado,
+    "checkout_url",
+    "checkoutUrl",
+    "url"
+  ) ||
+  obterValor(
+    envelope,
+    "checkout_url",
+    "checkoutUrl",
+    "url"
+  );
+
+          // --------------------------------------------
+          // MOSTRA SUCESSO
+          // --------------------------------------------
+
           if (formSuccess) {
 
-            const numero =
-              String(
-                obterValor(
-                  resultado,
-                  "numero_inscricao",
-                  "numeroInscricao",
-                  "numero"
-                ) || ""
-              ).padStart(3, "0");
+  formSuccess.innerHTML = `
+    <strong>INSCRIÇÃO RECEBIDA!</strong>
 
-            const mensagem =
-              [
-                "Olá! Gostaria de confirmar minha inscrição no Itaitinga MTB Race XCP 2026.",
-                "",
-                "Inscrição: #" + numero,
-                "Nome: " + dados.nome,
-                "Categoria: " + dados.categoria
-              ].join("\n");
+    <span>
+      Número da inscrição:
+      <strong>#${numero}</strong>
+    </span>
 
-            const linkWhatsapp =
-              WHATSAPP_INSCRICOES
-                ? "https://wa.me/" +
-                  WHATSAPP_INSCRICOES +
-                  "?text=" +
-                  encodeURIComponent(
-                    mensagem
-                  )
-                : "";
+    <span>
+      Valor da inscrição:
+      <strong>
+        R$ ${Number(
+          obterValor(
+            resultado,
+            "valor"
+          ) ||
+          obterValor(
+            envelope,
+            "valor"
+          ) ||
+          0
+        ).toFixed(2).replace(".", ",")}
+      </strong>
+    </span>
 
-            formSuccess.innerHTML = `
-              <strong>INSCRIÇÃO RECEBIDA!</strong>
+    ${
+      checkoutUrl
+        ? `
+          <a
+            class="btn btn-primary form-success-pagamento"
+            href="${checkoutUrl}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            💳 PAGAR MINHA INSCRIÇÃO
+          </a>
+        `
+        : `
+          <small>
+            Sua inscrição foi registrada e está aguardando confirmação.
+          </small>
+        `
+    }
 
-              <span>
-                Número da inscrição:
-                <strong>#${numero}</strong>
-              </span>
+    ${
+      linkWhatsapp
+        ? `
+          <a
+            class="btn btn-whatsapp form-success-whatsapp"
+            href="${linkWhatsapp}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            💬 CONFIRMAR MINHA INSCRIÇÃO PELO WHATSAPP
+          </a>
+        `
+        : ""
+    }
 
-              ${
-                linkWhatsapp
-                  ? `
-                    <a
-                      class="btn btn-whatsapp form-success-whatsapp"
-                      href="${linkWhatsapp}"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      💬 CONFIRMAR MINHA INSCRIÇÃO PELO WHATSAPP
-                    </a>
-                  `
-                  : ""
-              }
+    ${
+      checkoutUrl
+        ? `
+          <small>
+            Você será direcionado para o ambiente seguro da InfinitePay
+            para concluir o pagamento.
+          </small>
+        `
+        : ""
+    }
+  `;
 
-              <small>
-                Sua inscrição foi registrada e está aguardando confirmação.
-              </small>
-            `;
+  formSuccess.hidden =
+    false;
+}
 
-            formSuccess.hidden =
-              false;
-          }
+          // --------------------------------------------
+          // LIMPA FORMULÁRIO
+          // --------------------------------------------
 
           registrationForm.reset();
 
@@ -922,7 +1109,12 @@ document.addEventListener("DOMContentLoaded", () => {
               "R$ 0,00";
           }
 
+          // --------------------------------------------
+          // ROLA ATÉ A MENSAGEM
+          // --------------------------------------------
+
           if (formSuccess) {
+
             formSuccess.scrollIntoView({
               behavior: "smooth",
               block: "nearest"
@@ -940,9 +1132,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             formSuccess.innerHTML = `
               <strong>ERRO AO REALIZAR INSCRIÇÃO</strong>
+
               <span>
                 ${
-                  erro.message ||
+                  erro?.message ||
                   "Não foi possível enviar a inscrição."
                 }
               </span>
@@ -954,12 +1147,16 @@ document.addEventListener("DOMContentLoaded", () => {
           } else {
 
             alert(
-              erro.message ||
+              erro?.message ||
               "Não foi possível enviar a inscrição."
             );
           }
 
         } finally {
+
+          // --------------------------------------------
+          // RESTAURA BOTÃO
+          // --------------------------------------------
 
           if (submitButton) {
 
@@ -1078,6 +1275,492 @@ document.addEventListener("DOMContentLoaded", () => {
           value;
       }
     );
+  }
+  
+  
+    // ----------------------------------------------------------
+  // RETORNO DO PAGAMENTO INFINITEPAY
+  // ----------------------------------------------------------
+
+  async function processarRetornoInfinitePay() {
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+    const orderNsu =
+      params.get("order_nsu");
+
+    if (!orderNsu) {
+      return;
+    }
+
+    console.log(
+      "Retorno InfinitePay detectado:",
+      orderNsu
+    );
+
+    /*
+     * Localiza a área de consulta.
+     */
+
+    const consulta =
+      document.getElementById(
+        "consulta-inscricao"
+      );
+
+    /*
+     * Se a página possuir a seção de consulta,
+     * usamos a própria estrutura visual dela.
+     */
+
+    if (consulta) {
+
+      consulta.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+
+    /*
+     * Mostra carregamento.
+     */
+
+    if (consultaLoading) {
+
+      consultaLoading.hidden =
+        false;
+    }
+
+    if (consultaErro) {
+
+      consultaErro.hidden =
+        true;
+
+      consultaErro.innerHTML =
+        "";
+    }
+
+    if (consultaResultado) {
+
+      consultaResultado.hidden =
+        true;
+    }
+
+    /*
+     * Faz até 5 tentativas.
+     *
+     * Isso resolve o caso em que a InfinitePay
+     * retorna para o site antes do webhook terminar
+     * de atualizar a planilha.
+     */
+
+    for (
+      let tentativa = 1;
+      tentativa <= 5;
+      tentativa++
+    ) {
+
+      try {
+
+        const url =
+          GOOGLE_SCRIPT_URL +
+          "?action=publicConsultarOrder" +
+          "&order_nsu=" +
+          encodeURIComponent(
+            orderNsu
+          ) +
+          "&_=" +
+          Date.now();
+
+        const response =
+          await fetch(
+            url,
+            {
+              method: "GET",
+              cache: "no-store"
+            }
+          );
+
+        if (!response.ok) {
+
+          throw new Error(
+            "Não foi possível consultar o pagamento."
+          );
+        }
+
+        const envelope =
+          await response.json();
+
+        console.log(
+          "Retorno da consulta por Order NSU:",
+          envelope
+        );
+
+        const resultado =
+          extrairResultado(
+            envelope
+          );
+
+        /*
+         * Se encontrou a inscrição,
+         * continua o processamento.
+         */
+
+        if (
+          resultado &&
+          resultado.encontrado === true
+        ) {
+
+          const numero =
+            obterValor(
+              resultado,
+              "numero_inscricao",
+              "numeroInscricao",
+              "numero"
+            );
+
+          const nome =
+            obterValor(
+              resultado,
+              "nome",
+              "atleta"
+            );
+
+          const categoria =
+            obterValor(
+              resultado,
+              "categoria"
+            );
+
+          const pagamento =
+            normalizarStatus(
+              obterValor(
+                resultado,
+                "pagamento"
+              )
+            );
+
+          const status =
+            normalizarStatus(
+              obterValor(
+                resultado,
+                "status",
+                "statusInscricao"
+              )
+            );
+
+          const formaPagamento =
+            obterValor(
+              resultado,
+              "forma_pagamento",
+              "formaPagamento"
+            );
+
+          const receiptUrl =
+            obterValor(
+              resultado,
+              "receipt_url",
+              "receiptUrl"
+            );
+
+          /*
+           * PAGAMENTO CONFIRMADO
+           */
+
+          if (
+            pagamento === "pago" ||
+            pagamento === "recebido" ||
+            pagamento === "confirmado" ||
+            status === "confirmado"
+          ) {
+
+            if (consultaLoading) {
+
+              consultaLoading.hidden =
+                true;
+            }
+
+            if (resultadoNumero) {
+
+              resultadoNumero.textContent =
+                "#" +
+                String(
+                  numero || "000"
+                ).padStart(
+                  3,
+                  "0"
+                );
+            }
+
+            if (resultadoNome) {
+
+              resultadoNome.textContent =
+                nome || "—";
+            }
+
+            if (resultadoCategoria) {
+
+              resultadoCategoria.textContent =
+                categoria || "—";
+            }
+
+            if (resultadoStatus) {
+
+              resultadoStatus.classList.remove(
+                "cancelado"
+              );
+
+              resultadoStatus.classList.add(
+                "confirmado"
+              );
+            }
+
+            if (resultadoStatusText) {
+
+              resultadoStatusText.textContent =
+                "✓ PAGAMENTO CONFIRMADO";
+            }
+
+            if (resultadoMensagem) {
+
+              resultadoMensagem.innerHTML = `
+                <strong>
+                  🎉 Inscrição confirmada com sucesso!
+                </strong>
+
+                <span>
+                  Seu pagamento foi recebido e sua inscrição
+                  está confirmada.
+                </span>
+
+                ${
+                  formaPagamento
+                    ? `
+                      <small>
+                        Forma de pagamento:
+                        <strong>
+                          ${formaPagamento}
+                        </strong>
+                      </small>
+                    `
+                    : ""
+                }
+              `;
+            }
+
+            /*
+             * Esconde botão de pagamento.
+             */
+
+            const botaoPagamento =
+              document.getElementById(
+                "resultado-pagamento"
+              );
+
+            if (botaoPagamento) {
+
+              botaoPagamento.hidden =
+                true;
+
+              botaoPagamento.removeAttribute(
+                "href"
+              );
+            }
+
+            /*
+             * Comprovante InfinitePay.
+             */
+
+            if (
+              receiptUrl &&
+              resultadoMensagem
+            ) {
+
+              const comprovante =
+                document.createElement(
+                  "a"
+                );
+
+              comprovante.className =
+                "btn btn-primary";
+
+              comprovante.href =
+                receiptUrl;
+
+              comprovante.target =
+                "_blank";
+
+              comprovante.rel =
+                "noopener noreferrer";
+
+              comprovante.textContent =
+                "🧾 VER COMPROVANTE";
+
+              resultadoMensagem.appendChild(
+                comprovante
+              );
+            }
+
+            /*
+             * WhatsApp
+             */
+
+            if (
+              resultadoWhatsapp &&
+              WHATSAPP_INSCRICOES
+            ) {
+
+              const mensagemWhatsapp =
+                [
+                  "Olá! Gostaria de confirmar minha inscrição no Itaitinga MTB Race XCP 2026.",
+                  "",
+                  "Inscrição: #" +
+                    String(
+                      numero || "000"
+                    ).padStart(
+                      3,
+                      "0"
+                    ),
+                  "Nome: " +
+                    (nome || ""),
+                  "Categoria: " +
+                    (categoria || ""),
+                  "Pagamento: " +
+                    (formaPagamento || "Confirmado")
+                ].join("\n");
+
+              resultadoWhatsapp.href =
+                "https://wa.me/" +
+                WHATSAPP_INSCRICOES +
+                "?text=" +
+                encodeURIComponent(
+                  mensagemWhatsapp
+                );
+
+              resultadoWhatsapp.hidden =
+                false;
+            }
+
+            if (consultaResultado) {
+
+              consultaResultado.hidden =
+                false;
+            }
+
+            /*
+             * Remove os parâmetros da InfinitePay
+             * da barra de endereço.
+             */
+
+            try {
+
+              window.history.replaceState(
+                {},
+                document.title,
+                window.location.pathname +
+                "#consulta-inscricao"
+              );
+
+            } catch (erroHistorico) {
+
+              console.warn(
+                "Não foi possível limpar a URL:",
+                erroHistorico
+              );
+            }
+
+            return;
+          }
+
+          /*
+           * Pagamento ainda não apareceu como Pago.
+           *
+           * O webhook pode estar chegando alguns
+           * segundos depois do retorno.
+           */
+
+          if (tentativa < 5) {
+
+            if (resultadoStatusText) {
+
+              resultadoStatusText.textContent =
+                "🟡 CONFIRMANDO PAGAMENTO...";
+            }
+
+            if (resultadoMensagem) {
+
+              resultadoMensagem.textContent =
+                "Pagamento recebido. Estamos confirmando sua inscrição...";
+            }
+
+            await new Promise(
+              resolve =>
+                setTimeout(
+                  resolve,
+                  2000
+                )
+            );
+
+            continue;
+          }
+        }
+
+      } catch (erro) {
+
+        console.error(
+          "Erro ao processar retorno InfinitePay:",
+          erro
+        );
+
+        if (tentativa < 5) {
+
+          await new Promise(
+            resolve =>
+              setTimeout(
+                resolve,
+                2000
+              )
+          );
+
+          continue;
+        }
+      }
+    }
+
+    /*
+     * Se chegou aqui, não conseguimos confirmar
+     * automaticamente.
+     */
+
+    if (consultaLoading) {
+
+      consultaLoading.hidden =
+        true;
+    }
+
+    if (consultaErro) {
+
+      consultaErro.innerHTML = `
+        <strong>
+          🟡 PAGAMENTO EM PROCESSAMENTO
+        </strong>
+
+        <span>
+          Recebemos o retorno do pagamento, mas a confirmação
+          ainda está sendo processada.
+        </span>
+
+        <small>
+          Aguarde alguns instantes e consulte sua inscrição
+          novamente pelo CPF.
+        </small>
+      `;
+
+      consultaErro.hidden =
+        false;
+    }
   }
 
   // ----------------------------------------------------------
@@ -1240,6 +1923,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
           if (cadastroCpf) {
+
             cadastroCpf.value =
               formatarCPF(cpf);
           }
@@ -1303,338 +1987,517 @@ document.addEventListener("DOMContentLoaded", () => {
       false;
   }
 
-  if (consultaForm) {
+  // ----------------------------------------------------------
+// FORMULÁRIO DE CONSULTA
+// ----------------------------------------------------------
 
-    consultaForm.addEventListener(
-      "submit",
-      async event => {
+if (consultaForm) {
 
-        event.preventDefault();
+  consultaForm.addEventListener(
+    "submit",
+    async event => {
 
-        limparConsulta();
+      event.preventDefault();
 
-        // CONSULTA: envia somente os 11 números.
-        const cpf =
-          somenteNumeros(
-            consultaCpf?.value
-          );
+      limparConsulta();
 
-        if (cpf.length !== 11) {
+      const cpf =
+        somenteNumeros(
+          consultaCpf?.value
+        );
 
-          if (consultaErro) {
+      if (cpf.length !== 11) {
 
-            consultaErro.textContent =
-              "Informe um CPF válido para consultar.";
+        if (consultaErro) {
 
-            consultaErro.hidden =
-              false;
-          }
+          consultaErro.textContent =
+            "Informe um CPF válido para consultar.";
 
-          return;
-        }
-
-        if (consultaLoading) {
-          consultaLoading.hidden =
+          consultaErro.hidden =
             false;
         }
 
-        try {
+        return;
+      }
 
-          const url =
-            GOOGLE_SCRIPT_URL +
-            "?action=publicConsultar" +
-            "&cpf=" +
-            encodeURIComponent(cpf) +
-            "&_=" +
-            Date.now();
+      if (consultaLoading) {
+        consultaLoading.hidden =
+          false;
+      }
 
-          const response =
-            await fetch(
-              url,
-              {
-                method: "GET",
-                cache: "no-store"
-              }
-            );
+      try {
 
-          if (!response.ok) {
-            throw new Error(
-              "Não foi possível consultar a inscrição."
-            );
-          }
+        const url =
+          GOOGLE_SCRIPT_URL +
+          "?action=publicConsultar" +
+          "&cpf=" +
+          encodeURIComponent(cpf) +
+          "&_=" +
+          Date.now();
 
-          const envelope =
-            await response.json();
-
-          const resultado =
-            extrairResultado(
-              envelope
-            );
-
-          if (consultaLoading) {
-            consultaLoading.hidden =
-              true;
-          }
-
-          const encontrado =
-            resultadoEncontrado(
-              envelope,
-              resultado
-            );
-
-          /*
-           * CORREÇÃO PRINCIPAL:
-           * não verifica somente resultado.sucesso.
-           *
-           * Se o backend retornar encontrado:true,
-           * a inscrição é considerada encontrada.
-           */
-          if (!encontrado) {
-
-            if (
-              resultadoTemInscricao(
-                resultado
-              )
-            ) {
-
-              // Mesmo sem o campo "encontrado",
-              // os dados da inscrição são válidos.
-              // Continua abaixo.
-
-            } else {
-
-              mostrarNaoEncontrado(
-                cpf
-              );
-
-              return;
+        const response =
+          await fetch(
+            url,
+            {
+              method: "GET",
+              cache: "no-store"
             }
-          }
+          );
 
-          const numero =
-            obterValor(
-              resultado,
-              "numero_inscricao",
-              "numeroInscricao",
-              "numero"
-            );
+        if (!response.ok) {
 
-          const nome =
-            obterValor(
-              resultado,
-              "nome",
-              "atleta"
-            );
+          throw new Error(
+            "Não foi possível consultar a inscrição."
+          );
+        }
 
-          const categoria =
-            obterValor(
-              resultado,
-              "categoria"
-            );
+        const envelope =
+          await response.json();
 
-          const status =
-            obterValor(
-              resultado,
-              "status",
-              "statusInscricao"
-            );
+        console.log(
+          "Resposta da consulta:",
+          envelope
+        );
 
-          const pagamento =
-            obterValor(
-              resultado,
-              "pagamento"
-            );
+        const resultado =
+          extrairResultado(
+            envelope
+          );
 
-          if (resultadoNumero) {
+        if (consultaLoading) {
+          consultaLoading.hidden =
+            true;
+        }
 
-            resultadoNumero.textContent =
-              "#" +
-              String(
-                numero || "000"
-              ).padStart(3, "0");
-          }
+        const encontrado =
+          resultadoEncontrado(
+            envelope,
+            resultado
+          );
 
-          if (resultadoNome) {
-            resultadoNome.textContent =
-              nome || "—";
-          }
-
-          if (resultadoCategoria) {
-            resultadoCategoria.textContent =
-              categoria || "—";
-          }
-
-          const statusNormal =
-            normalizarStatus(
-              status
-            );
-
-          const pagamentoNormal =
-            normalizarStatus(
-              pagamento
-            );
-
-          if (resultadoWhatsapp) {
-
-            resultadoWhatsapp.hidden =
-              true;
-
-            resultadoWhatsapp.removeAttribute(
-              "href"
-            );
-          }
-
-          if (resultadoStatus) {
-
-            resultadoStatus.classList.remove(
-              "confirmado",
-              "cancelado"
-            );
-          }
+        if (!encontrado) {
 
           if (
-            statusNormal ===
-              "cancelado" ||
-            statusNormal ===
-              "cancelada"
+            resultadoTemInscricao(
+              resultado
+            )
           ) {
 
-            resultadoStatus?.classList.add(
-              "cancelado"
-            );
-
-            if (resultadoStatusText) {
-              resultadoStatusText.textContent =
-                "INSCRIÇÃO CANCELADA";
-            }
-
-            if (resultadoMensagem) {
-              resultadoMensagem.textContent =
-                "Entre em contato com a organização caso precise de atendimento.";
-            }
-
-          } else if (
-            statusNormal ===
-              "confirmado" ||
-            statusNormal ===
-              "confirmada"
-          ) {
-
-            resultadoStatus?.classList.add(
-              "confirmado"
-            );
-
-            if (resultadoStatusText) {
-              resultadoStatusText.textContent =
-                "✓ INSCRIÇÃO CONFIRMADA";
-            }
-
-            if (resultadoMensagem) {
-              resultadoMensagem.textContent =
-                "Sua inscrição está confirmada. Nos vemos na largada!";
-            }
-
-          } else if (
-            pagamentoNormal === "pago" ||
-            pagamentoNormal === "paga" ||
-            pagamentoNormal === "recebido" ||
-            pagamentoNormal === "recebida" ||
-            pagamentoNormal === "confirmado" ||
-            pagamentoNormal === "confirmada"
-          ) {
-
-            resultadoStatus?.classList.add(
-              "confirmado"
-            );
-
-            if (resultadoStatusText) {
-              resultadoStatusText.textContent =
-                "✓ PAGAMENTO CONFIRMADO";
-            }
-
-            if (resultadoMensagem) {
-              resultadoMensagem.textContent =
-                "Seu pagamento foi confirmado. Sua inscrição está em processo de confirmação.";
-            }
+            // Possui dados da inscrição.
+            // Continua normalmente.
 
           } else {
 
-            if (resultadoStatusText) {
-              resultadoStatusText.textContent =
-                "🟡 PAGAMENTO / CONFIRMAÇÃO PENDENTE";
-            }
+            mostrarNaoEncontrado(
+              cpf
+            );
 
-            if (resultadoMensagem) {
-              resultadoMensagem.textContent =
-                "Sua inscrição foi localizada, mas o pagamento ainda aguarda confirmação.";
-            }
+            return;
+          }
+        }
 
-            if (
-              resultadoWhatsapp &&
-              WHATSAPP_INSCRICOES
-            ) {
+        // --------------------------------------------
+        // DADOS DA INSCRIÇÃO
+        // --------------------------------------------
 
-              const mensagem =
-                [
-                  "Olá! Gostaria de confirmar minha inscrição no Itaitinga MTB Race XCP 2026.",
-                  "",
-                  "Inscrição: #" +
-                    String(
-                      numero || "000"
-                    ).padStart(3, "0"),
-                  "Nome: " +
-                    (nome || ""),
-                  "Categoria: " +
-                    (categoria || "")
-                ].join("\n");
+        const numero =
+          obterValor(
+            resultado,
+            "numero_inscricao",
+            "numeroInscricao",
+            "numero"
+          );
 
-              resultadoWhatsapp.href =
-                "https://wa.me/" +
-                WHATSAPP_INSCRICOES +
-                "?text=" +
-                encodeURIComponent(
-                  mensagem
-                );
+        const nome =
+          obterValor(
+            resultado,
+            "nome",
+            "atleta"
+          );
 
-              resultadoWhatsapp.hidden =
-                false;
-            }
+        const categoria =
+          obterValor(
+            resultado,
+            "categoria"
+          );
+
+        const status =
+          obterValor(
+            resultado,
+            "status",
+            "statusInscricao"
+          );
+
+        const pagamento =
+          obterValor(
+            resultado,
+            "pagamento"
+          );
+
+        // --------------------------------------------
+        // NOVO: URL DO CHECKOUT
+        // --------------------------------------------
+
+        const checkoutUrl =
+          obterValor(
+            resultado,
+            "checkout_url",
+            "checkoutUrl"
+          );
+
+        console.log(
+          "Checkout da consulta:",
+          checkoutUrl
+        );
+
+        // --------------------------------------------
+        // PREENCHIMENTO DOS DADOS
+        // --------------------------------------------
+
+        if (resultadoNumero) {
+
+          resultadoNumero.textContent =
+            "#" +
+            String(
+              numero || "000"
+            ).padStart(3, "0");
+        }
+
+        if (resultadoNome) {
+
+          resultadoNome.textContent =
+            nome || "—";
+        }
+
+        if (resultadoCategoria) {
+
+          resultadoCategoria.textContent =
+            categoria || "—";
+        }
+
+        const statusNormal =
+          normalizarStatus(
+            status
+          );
+
+        const pagamentoNormal =
+          normalizarStatus(
+            pagamento
+          );
+
+        // --------------------------------------------
+        // WHATSAPP
+        // --------------------------------------------
+
+        if (resultadoWhatsapp) {
+
+          resultadoWhatsapp.hidden =
+            true;
+
+          resultadoWhatsapp.removeAttribute(
+            "href"
+          );
+        }
+
+        // --------------------------------------------
+        // STATUS
+        // --------------------------------------------
+
+        if (resultadoStatus) {
+
+          resultadoStatus.classList.remove(
+            "confirmado",
+            "cancelado"
+          );
+        }
+
+        // --------------------------------------------
+        // CANCELADO
+        // --------------------------------------------
+
+        if (
+          statusNormal === "cancelado" ||
+          statusNormal === "cancelada"
+        ) {
+
+          resultadoStatus?.classList.add(
+            "cancelado"
+          );
+
+          if (resultadoStatusText) {
+
+            resultadoStatusText.textContent =
+              "INSCRIÇÃO CANCELADA";
           }
 
-          if (consultaResultado) {
-            consultaResultado.hidden =
+          if (resultadoMensagem) {
+
+            resultadoMensagem.textContent =
+              "Entre em contato com a organização caso precise de atendimento.";
+          }
+
+        // --------------------------------------------
+        // CONFIRMADO
+        // --------------------------------------------
+
+        } else if (
+          statusNormal === "confirmado" ||
+          statusNormal === "confirmada"
+        ) {
+
+          resultadoStatus?.classList.add(
+            "confirmado"
+          );
+
+          if (resultadoStatusText) {
+
+            resultadoStatusText.textContent =
+              "✓ INSCRIÇÃO CONFIRMADA";
+          }
+
+          if (resultadoMensagem) {
+
+            resultadoMensagem.textContent =
+              "Sua inscrição está confirmada. Nos vemos na largada!";
+          }
+
+        // --------------------------------------------
+        // PAGAMENTO CONFIRMADO
+        // --------------------------------------------
+
+        } else if (
+          pagamentoNormal === "pago" ||
+          pagamentoNormal === "paga" ||
+          pagamentoNormal === "recebido" ||
+          pagamentoNormal === "recebida" ||
+          pagamentoNormal === "confirmado" ||
+          pagamentoNormal === "confirmada"
+        ) {
+
+          resultadoStatus?.classList.add(
+            "confirmado"
+          );
+
+          if (resultadoStatusText) {
+
+            resultadoStatusText.textContent =
+              "✓ PAGAMENTO CONFIRMADO";
+          }
+
+          if (resultadoMensagem) {
+
+            resultadoMensagem.textContent =
+              "Seu pagamento foi confirmado. Sua inscrição está em processo de confirmação.";
+          }
+
+        // --------------------------------------------
+        // PAGAMENTO PENDENTE
+        // --------------------------------------------
+
+        } else {
+
+          if (resultadoStatusText) {
+
+            resultadoStatusText.textContent =
+              "🟡 PAGAMENTO / CONFIRMAÇÃO PENDENTE";
+          }
+
+          if (resultadoMensagem) {
+
+            resultadoMensagem.textContent =
+              "Sua inscrição foi localizada, mas o pagamento ainda aguarda confirmação.";
+          }
+
+          // ------------------------------------------
+          // BOTÃO PAGAR
+          // ------------------------------------------
+
+          if (
+            checkoutUrl &&
+            consultaResultado
+          ) {
+
+            let botaoPagamento =
+              document.getElementById(
+                "resultado-pagamento"
+              );
+
+            if (!botaoPagamento) {
+
+              botaoPagamento =
+                document.createElement(
+                  "a"
+                );
+
+              botaoPagamento.id =
+                "resultado-pagamento";
+
+              botaoPagamento.className =
+                "btn btn-primary resultado-pagamento";
+
+              botaoPagamento.target =
+                "_blank";
+
+              botaoPagamento.rel =
+                "noopener noreferrer";
+
+              botaoPagamento.textContent =
+                "💳 PAGAR MINHA INSCRIÇÃO";
+
+              if (resultadoMensagem) {
+
+                resultadoMensagem.parentNode.insertBefore(
+                  botaoPagamento,
+                  resultadoMensagem
+                );
+
+              } else {
+
+                consultaResultado.appendChild(
+                  botaoPagamento
+                );
+              }
+            }
+
+            botaoPagamento.href =
+              checkoutUrl;
+
+            botaoPagamento.hidden =
               false;
           }
 
-        } catch (erro) {
+          // ------------------------------------------
+          // WHATSAPP
+          // ------------------------------------------
 
-          console.error(
-            "Erro na consulta:",
-            erro
-          );
+          if (
+            resultadoWhatsapp &&
+            WHATSAPP_INSCRICOES
+          ) {
 
-          if (consultaLoading) {
-            consultaLoading.hidden =
-              true;
-          }
+            const mensagem =
+              [
+                "Olá! Gostaria de confirmar minha inscrição no Itaitinga MTB Race XCP 2026.",
+                "",
+                "Inscrição: #" +
+                  String(
+                    numero || "000"
+                  ).padStart(3, "0"),
+                "Nome: " +
+                  (nome || ""),
+                "Categoria: " +
+                  (categoria || "")
+              ].join("\n");
 
-          if (consultaErro) {
+            resultadoWhatsapp.href =
+              "https://wa.me/" +
+              WHATSAPP_INSCRICOES +
+              "?text=" +
+              encodeURIComponent(
+                mensagem
+              );
 
-            consultaErro.innerHTML = `
-              <strong>ERRO NA CONSULTA</strong>
-
-              <span>
-                Não foi possível consultar a inscrição agora.
-                Tente novamente em alguns instantes.
-              </span>
-            `;
-
-            consultaErro.hidden =
+            resultadoWhatsapp.hidden =
               false;
           }
         }
-      }
-    );
-  }
 
+        // --------------------------------------------
+        // ESCONDE BOTÃO QUANDO NÃO DEVE PAGAR
+        // --------------------------------------------
+
+        const botaoPagamento =
+          document.getElementById(
+            "resultado-pagamento"
+          );
+
+        if (botaoPagamento) {
+
+          const podePagar =
+            (
+              !statusNormal ||
+              (
+                statusNormal !== "cancelado" &&
+                statusNormal !== "cancelada" &&
+                statusNormal !== "confirmado" &&
+                statusNormal !== "confirmada"
+              )
+            ) &&
+            !(
+              pagamentoNormal === "pago" ||
+              pagamentoNormal === "paga" ||
+              pagamentoNormal === "recebido" ||
+              pagamentoNormal === "recebida" ||
+              pagamentoNormal === "confirmado" ||
+              pagamentoNormal === "confirmada"
+            );
+
+          if (
+            podePagar &&
+            checkoutUrl
+          ) {
+
+            botaoPagamento.href =
+              checkoutUrl;
+
+            botaoPagamento.hidden =
+              false;
+
+          } else {
+
+            botaoPagamento.hidden =
+              true;
+
+            botaoPagamento.removeAttribute(
+              "href"
+            );
+          }
+        }
+
+        // --------------------------------------------
+        // MOSTRA RESULTADO
+        // --------------------------------------------
+
+        if (consultaResultado) {
+
+          consultaResultado.hidden =
+            false;
+        }
+
+      } catch (erro) {
+
+        console.error(
+          "Erro na consulta:",
+          erro
+        );
+
+        if (consultaLoading) {
+
+          consultaLoading.hidden =
+            true;
+        }
+
+        if (consultaErro) {
+
+          consultaErro.innerHTML = `
+            <strong>ERRO NA CONSULTA</strong>
+
+            <span>
+              Não foi possível consultar a inscrição agora.
+              Tente novamente em alguns instantes.
+            </span>
+          `;
+
+          consultaErro.hidden =
+            false;
+        }
+      }
+    }
+  );
+}
+  // ----------------------------------------------------------
+  // INICIA RETORNO INFINITEPAY
+  // ----------------------------------------------------------
+
+  processarRetornoInfinitePay();
 });
