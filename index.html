@@ -1,459 +1,325 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<!-- =========================================================
-       SEO BÁSICO
-       Edite título, descrição e palavras-chave quando quiser.
-       ========================================================= -->
-<title>Itaitinga MTB Race | XCP 2026</title>
-<meta content="Itaitinga MTB Race - XCP 2026. Pedale, supere, conquiste." name="description"/>
-<meta content="#050505" name="theme-color"/>
-<!-- Fonte externa. Se quiser 100% offline, remova e use fontes do sistema. -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&amp;family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="css/styles.css" rel="stylesheet"/>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Itaitinga MTB Race | XCP 2026</title>
+  <meta name="description" content="Itaitinga MTB Race - XCP 2026. Pedale, supere, conquiste."/>
+  <meta name="theme-color" content="#050505"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="css/styles.css" rel="stylesheet"/>
 </head>
 <body>
-<!-- =========================================================
-       HEADER / MENU
-       - Menu fixo no topo.
-       - No celular vira menu hambúrguer.
-       ========================================================= -->
+
 <header class="site-header" id="topo">
-<div class="container header-inner">
-<a aria-label="Itaitinga MTB Race - início" class="brand" href="#inicio">
-<img alt="Itaitinga MTB Race" src="assets/logo-itaitinga-mtb.png"/>
-</a>
-<button aria-expanded="false" aria-label="Abrir menu" class="menu-toggle" id="menuToggle">
-<span></span><span></span><span></span>
-</button>
-<nav class="main-nav" id="mainNav"><a href="#sobre">A PROVA</a><a href="#percurso">PERCURSO</a><a href="#programacao">PROGRAMAÇÃO</a><a class="nav-consult" href="#consulta-inscricao">CONSULTAR INSCRIÇÃO</a><a class="nav-cta" href="#inscricoes">INSCRIÇÕES</a><a href="#contato">CONTATO</a></nav>
-</div>
+  <div class="container header-inner">
+    <a aria-label="Itaitinga MTB Race - início" class="brand" href="#inicio">
+      <img alt="Itaitinga MTB Race" src="assets/logo-itaitinga-mtb.png"/>
+    </a>
+
+    <button aria-expanded="false" aria-label="Abrir menu" class="menu-toggle" id="menuToggle">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="#sobre">SOBRE</a>
+      <a class="nav-consult" href="#consulta-inscricao">CONSULTAR INSCRIÇÃO</a>
+      <a class="nav-cta js-open-registration" href="#inscricoes">INSCREVA-SE</a>
+    </nav>
+  </div>
 </header>
-<!-- =========================================================
-       HERO
-       IMPORTANTE:
-       A imagem de fundo está no CSS.
-       Procure por "HERO" em styles.css para trocar.
-       ========================================================= -->
+
 <main>
-<section class="hero" id="inicio">
-<div class="hero-overlay"></div>
-<div class="container hero-content">
-<div class="hero-copy reveal">
-<span class="eyebrow">XCP 2026 • MOUNTAIN BIKE</span>
-<h1>
-            SUPERE SEUS LIMITES.
-            <strong>VIVA ESSA AVENTURA!</strong>
-</h1>
-<div class="event-badge">ITAITINGA • CEARÁ</div>
-<p class="hero-text">
-            Uma experiência de MTB para quem gosta de desafio,
-            trilha, velocidade e superação.
-          </p>
-<div class="hero-actions">
-<a class="btn btn-primary js-open-registration" href="#form-inscricao">FAZER INSCRIÇÃO <span>→</span></a>
-<a class="btn btn-outline" href="#programacao">VER PROGRAMAÇÃO <span>→</span></a>
-<a class="btn btn-outline js-open-consultation" href="#consulta-inscricao">CONSULTAR INSCRIÇÃO <span>→</span></a>
-</div>
-</div>
-<!-- Resumo rápido do evento -->
-<div class="hero-info reveal">
-<div>
-<small>DATA</small>
-<strong id="siteDataEvento">01 NOV 2026</strong>
-<span>DOMINGO</span>
-</div>
-<div>
-<small>LOCAL</small>
-<strong><span id="siteCidade">ITAITINGA</span> - <span id="siteEstado">CE</span></strong>
-<span>CEARÁ</span>
-</div>
-<div>
-<small>MODALIDADE</small>
-<strong id="siteModalidade">XCP</strong>
-<span>MOUNTAIN BIKE</span>
-</div>
-<div>
-<small>DESAFIO</small>
-<strong><span id="siteDistancia"><span id="siteAltimetria">1100</span>M+ ALTIMETRIA</span> KM</strong>
-<span>1100M+ ALTIMETRIA</span>
-</div>
-</div>
-</div>
-</section>
-<!-- =========================================================
-         CONTAGEM REGRESSIVA
-         O JS calcula automaticamente.
-         Para alterar a data, procure EVENT_DATE em js/main.js.
-         ========================================================= -->
 
-<!-- =========================================================
-         ATALHOS
-         Seções que normalmente o atleta procura primeiro.
-         ========================================================= -->
+  <!-- HERO -->
+  <section class="hero" id="inicio">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+      <div class="hero-copy reveal">
+        <span class="eyebrow">XCP 2026 • MOUNTAIN BIKE</span>
+        <h1>
+          SUPERE SEUS LIMITES.
+          <strong>VIVA ESSA AVENTURA!</strong>
+        </h1>
 
-<!-- =========================================================
-         SOBRE
-         ========================================================= -->
-<section class="section section-dark" id="sobre">
-<div class="container split-section">
-<div class="section-copy reveal">
-<span class="section-label">SOBRE A PROVA</span>
-<h2>ITAITINGA <em>MTB RACE</em></h2>
-<p>
-            O Itaitinga MTB Race nasceu para reunir atletas,
-            trilheiros e apaixonados por bicicleta em uma experiência
-            que mistura desafio, natureza e espírito de competição.
-          </p>
-<p>
-            Prepare-se para encarar subidas, descidas, estradões e
-            trilhas que vão colocar suas pernas e sua mente à prova.
-          </p>
-<a class="text-link" href="#programacao">CONHEÇA O EVENTO →</a>
-</div>
-<div class="stats-panel reveal">
-<div class="stat">
-<span>50 KM</span>
-<small>PERCURSO</small>
-</div>
-<div class="stat">
-<span>1100M+</span>
-<small>ALTIMETRIA</small>
-</div>
-<div class="stat">
-<span>XCP</span>
-<small>MODALIDADE</small>
-</div>
-<div class="stat">
-<span>100%</span>
-<small>ADRENALINA</small>
-</div>
-</div>
-</div>
-</section>
-<!-- =========================================================
-         CARDS PRINCIPAIS
-         Cada card pode virar uma página própria no futuro.
-         ========================================================= -->
+        <div class="event-badge">ITAITINGA • CEARÁ</div>
 
-<!-- =========================================================
-         DIFERENCIAIS
-         ========================================================= -->
-
-<!-- =========================================================
-         PERCURSO DETALHADO
-         ========================================================= -->
-<section class="section section-dark" id="percurso">
-<div class="container route-layout">
-<div class="route-map reveal">
-<!--
-            PLACEHOLDER DO MAPA:
-            Substitua este bloco por uma imagem do percurso, mapa GPX
-            ou um iframe do Google Maps/Strava quando tiver.
-          -->
-<div class="fake-map">
-<span class="map-title">MAPA DO PERCURSO</span>
-<div class="route-line"></div>
-<div class="map-point start">LARGADA</div>
-<div class="map-point finish">CHEGADA</div>
-</div>
-</div>
-<div class="route-copy reveal">
-<span class="section-label">PERCURSO</span>
-<h2>ENCARRE O <em>DESAFIO</em></h2>
-<p>
-            Um percurso pensado para entregar uma experiência completa
-            de XCP, com trechos rápidos, subidas exigentes e muita
-            paisagem de Itaitinga.
-          </p>
-<div class="route-metrics">
-<div><strong>50</strong><span>KM</span></div>
-<div><strong>1100+</strong><span>ALTIMETRIA</span></div>
-<div><strong>XCP</strong><span>MODALIDADE</span></div>
-</div>
-<a class="btn btn-outline" href="#">BAIXAR GPX →</a>
-</div>
-</div>
-</section>
-<!-- =========================================================
-         CATEGORIAS
-         ========================================================= -->
-
-<!-- =========================================================
-         PROGRAMAÇÃO
-         ========================================================= -->
-<section class="section section-dark" id="programacao">
-<div class="container">
-<div class="section-heading reveal">
-<span class="section-label">PROGRAMAÇÃO</span>
-<h2>ORGANIZE O SEU <em>DIA</em></h2>
-</div>
-<div class="timeline">
-<div class="timeline-item">
-<span>06:00</span>
-<div>
-<strong>ABERTURA DA ARENA</strong>
-<p>Credenciamento, retirada de kit e concentração.</p>
-</div>
-</div>
-<div class="timeline-item">
-<span>07:30</span>
-<div>
-<strong>BRIEFING</strong>
-<p>Orientações finais e informações do percurso.</p>
-</div>
-</div>
-<div class="timeline-item highlight">
-<span>08:00</span>
-<div>
-<strong>LARGADA XCP</strong>
-<p>É hora de pedalar, superar e conquistar!</p>
-</div>
-</div>
-<div class="timeline-item">
-<span>12:00</span>
-<div>
-<strong>PREMIAÇÃO</strong>
-<p>Entrega de troféus e medalhas.</p>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- =========================================================
-         PREMIAÇÃO / INSCRIÇÕES
-         ========================================================= -->
-<!-- =========================================================
-         CONSULTA DE INSCRIÇÃO
-         O atleta informa o CPF e o site consulta o Google Apps Script.
-         Dados sensíveis não são exibidos na consulta pública.
-         ========================================================= -->
-<section class="consultation-section" id="consulta-inscricao">
-<div class="container consultation-layout">
-<div class="consultation-intro reveal">
-<span class="section-label">ÁREA DO ATLETA</span>
-<h2>CONSULTE SUA <em>INSCRIÇÃO</em></h2>
-<p>
-            Consulte o status da sua inscrição usando o CPF informado no cadastro.
-          </p>
-<div class="consultation-note">
-<strong>🔒 SEUS DADOS</strong>
-<span>
-              A consulta pública exibe apenas as informações necessárias
-              para identificar sua inscrição.
-            </span>
-</div>
-</div>
-<div class="consultation-card reveal">
-<form class="consultation-form" id="form-consulta">
-<label for="consulta-cpf">CPF</label>
-<div class="consultation-input-row">
-<input autocomplete="off" id="consulta-cpf" maxlength="14" name="cpf" placeholder="000.000.000-00" required="" type="text"/>
-<button class="btn btn-primary" type="submit">
-                CONSULTAR
-              </button>
-</div>
-<p class="consultation-hint">
-              Informe o mesmo CPF utilizado na inscrição.
-            </p>
-</form>
-<div class="consulta-state" hidden="" id="consulta-loading">
-            CONSULTANDO INSCRIÇÃO...
-          </div>
-<div class="consulta-state consulta-error" hidden="" id="consulta-erro"></div>
-<div class="registration-result" hidden="" id="consulta-resultado">
-<div class="result-top">
-<span>ITAITINGA MTB RACE</span>
-<strong id="resultado-numero">#000</strong>
-</div>
-<div class="result-athlete">
-<small>ATLETA</small>
-<strong id="resultado-nome">—</strong>
-</div>
-<div class="result-category">
-<small>CATEGORIA</small>
-<strong id="resultado-categoria">—</strong>
-</div>
-<div class="result-status" id="resultado-status">
-<span id="resultado-status-text">—</span>
-</div>
-<!-- Só aparece quando a inscrição não está confirmada. -->
-<a class="btn btn-whatsapp" hidden="" href="#" id="resultado-whatsapp" rel="noopener noreferrer" target="_blank">
-              💬 CONFIRMAR MINHA INSCRIÇÃO
-            </a>
-<p class="result-message" id="resultado-mensagem"></p>
-</div>
-</div>
-</div>
-</section>
-<section class="registration-section" id="inscricoes">
-<div class="container registration-layout">
-<div class="registration-intro reveal">
-<span class="section-label">INSCRIÇÕES</span>
-<h2>GARANTA SUA <em>VAGA</em></h2>
-<p>Preencha seus dados, escolha a categoria disponível e siga para o pagamento da sua inscrição.</p>
-<div class="registration-notes">
-<div><strong>01</strong><span>Preencha seus dados corretamente.</span></div>
-<div><strong>02</strong><span>Escolha sua categoria.</span></div>
-<div><strong>03</strong><span>Envie o formulário e aguarde as orientações.</span></div>
-</div>
-</div>
-
-<form class="registration-form reveal" id="form-inscricao">
-<div class="form-header">
-<span>ITAITINGA MTB RACE</span>
-<strong>FICHA DO ATLETA</strong>
-</div>
-<div class="form-grid">
-<div class="form-group full">
-<label for="nome">Nome completo *</label>
-<input id="nome" name="nome" placeholder="Digite seu nome completo" required="" type="text"/>
-</div>
-<div class="form-group">
-<label for="cpf">CPF *</label>
-<input id="cpf" maxlength="14" name="cpf" placeholder="000.000.000-00" required="" type="text"/>
-</div>
-<div class="form-group">
-<label for="dataNascimento">Data de nascimento</label>
-<input id="dataNascimento" name="dataNascimento" required="" type="date">
-</input></div>
-<div class="form-group">
-<label for="estado">Estado</label>
-<select id="estado" name="estado" required="">
-<option value="">Selecione o estado</option>
-</select>
-</div>
-<div class="form-group">
-<label for="cidade">Cidade</label>
-<select disabled="" id="cidade" name="cidade" required="">
-<option value="">Selecione primeiro o estado</option>
-</select>
-</div>
-<div class="form-group">
-<label for="pcd">É PCD?</label>
-<select id="pcd" name="pcd" required="">
-<option value="">Selecione</option>
-<option value="Não">Não</option>
-<option value="Sim">Sim</option>
-</select>
-</div>
-<div class="form-group">
-<label for="equipe">Nome da equipe</label>
-<input id="equipe" name="equipe" placeholder="Digite o nome da equipe" type="text">
-</input></div>
-<div class="form-group">
-<label for="email">E-mail *</label>
-<input id="email" name="email" placeholder="seuemail@email.com" required="" type="email"/>
-</div>
-<div class="form-group">
-<label for="telefone">WhatsApp *</label>
-<input id="telefone" name="telefone" placeholder="(85) 9 9999-9999" required="" type="tel"/>
-</div>
-<div class="form-group">
-<label for="lote">Lote</label>
-<input id="lote" name="lote" readonly="" type="text" value="CARREGANDO..."/>
-</div>
-<div class="form-group">
-<label for="categoria">Categoria *</label>
-<select disabled="" id="categoria" name="categoria" required="">
-<option value="">CARREGANDO CATEGORIAS...</option>
-</select>
-</div>
-<div class="form-group">
-<label for="valor">Valor</label>
-<input id="valor" name="valor" readonly="" type="text" value="R$ 0,00"/>
-</div>
-<div class="form-check full">
-<input id="termos" name="termos" required="" type="checkbox"/>
-<label for="termos">
-                Declaro que as informações preenchidas são verdadeiras e
-                concordo com o regulamento da prova. *
-              </label>
-</div>
-</div>
-<button class="btn btn-primary btn-submit" type="submit">
-            ENVIAR INSCRIÇÃO <span>→</span>
-</button>
-<p class="form-disclaimer">* Campos obrigatórios. O valor da inscrição é definido pelo lote vigente da organização.</p>
-<div class="form-success" hidden="" id="formSuccess">
-<strong>INSCRIÇÃO RECEBIDA!</strong>
-<span>
-              Sua inscrição foi registrada. O pagamento ficará pendente até a
-              organização receber e validar o comprovante.
-            </span>
-</div>
-</form>
-</div>
-</section>
-<!-- =========================================================
-         REGULAMENTO / NOTÍCIAS / EQUIPE
-         ========================================================= -->
-
-<!-- =========================================================
-         GALERIA
-         ========================================================= -->
-
-<!-- =========================================================
-         PATROCINADORES
-         ========================================================= -->
-<section class="sponsors">
-<div class="container">
-<span class="section-label">PATROCINADORES</span>
-<div class="sponsor-list">
-<div>SUA MARCA<br/>AQUI</div>
-<div>SUA MARCA<br/>AQUI</div>
-<div>SUA MARCA<br/>AQUI</div>
-<div>SUA MARCA<br/>AQUI</div>
-<div>SUA MARCA<br/>AQUI</div>
-</div>
-</div>
-</section>
-</main>
-<!-- =========================================================
-       FOOTER
-       ========================================================= -->
-<footer class="site-footer" id="contato">
-<div class="container footer-grid">
-<div class="footer-brand">
-<img alt="Itaitinga MTB Race" src="assets/logo-itaitinga-mtb.png"/>
-<p>
-          Pedale. Supere. Conquiste.
-          <br/>Nos vemos na trilha!
+        <p class="hero-text">
+          Uma experiência de MTB para quem gosta de desafio,
+          trilha, velocidade e superação.
         </p>
-</div>
-<div>
-<span class="footer-title">LOCALIZAÇÃO</span>
-<strong>Itaitinga - Ceará</strong>
-<p>Local oficial será divulgado em breve.</p>
-<a class="text-link" href="#">VER NO MAPA →</a>
-</div>
-<div>
-<span class="footer-title">CONTATO</span>
-<p>WhatsApp: <strong>(85) 9 9999-9999</strong></p>
-<p>E-mail: contato@itaitingamtbrace.com.br</p>
-</div>
-<div>
-<span class="footer-title">SIGA O EVENTO</span>
-<div class="socials">
-<!-- Troque # pelos links reais -->
-<a aria-label="Instagram" href="#">IG</a>
-<a aria-label="Facebook" href="#">FB</a>
-<a aria-label="WhatsApp" href="#">WA</a>
-</div>
-</div>
-</div>
-<div class="footer-bottom">
-<div class="container">
-<span>© 2026 Itaitinga MTB Race - Todos os direitos reservados.</span>
-<span>PEDALE • SUPERE • CONQUISTE</span>
-</div>
-</div>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary js-open-registration" href="#inscricoes">FAZER INSCRIÇÃO <span>→</span></a>
+          <a class="btn btn-outline js-open-consultation" href="#consulta-inscricao">CONSULTAR INSCRIÇÃO <span>→</span></a>
+        </div>
+      </div>
+
+      <div class="hero-info reveal">
+        <div>
+          <small>DATA</small>
+          <strong id="siteDataEvento">01 NOV 2026</strong>
+          <span>DOMINGO</span>
+        </div>
+        <div>
+          <small>LOCAL</small>
+          <strong><span id="siteCidade">ITAITINGA</span> - <span id="siteEstado">CE</span></strong>
+          <span>CEARÁ</span>
+        </div>
+        <div>
+          <small>MODALIDADE</small>
+          <strong id="siteModalidade">XCP</strong>
+          <span>MOUNTAIN BIKE</span>
+        </div>
+        <div>
+          <small>DESAFIO</small>
+          <strong><span id="siteDistancia">50</span> KM</strong>
+          <span><span id="siteAltimetria">1100</span>M+ ALTIMETRIA</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOBRE -->
+  <section class="section section-dark" id="sobre">
+    <div class="container split-section">
+      <div class="section-copy reveal">
+        <span class="section-label">SOBRE A PROVA</span>
+        <h2>ITAITINGA <em>MTB RACE</em></h2>
+        <p>
+          O Itaitinga MTB Race nasceu para reunir atletas,
+          trilheiros e apaixonados por bicicleta em uma experiência
+          que mistura desafio, natureza e espírito de competição.
+        </p>
+        <p>
+          Prepare-se para encarar subidas, descidas, estradões e
+          trilhas que vão colocar suas pernas e sua mente à prova.
+        </p>
+        <a class="text-link js-open-registration" href="#inscricoes">FAÇA SUA INSCRIÇÃO →</a>
+      </div>
+
+      <div class="stats-panel reveal">
+        <div class="stat">
+          <span>50 KM</span>
+          <small>PERCURSO</small>
+        </div>
+        <div class="stat">
+          <span>1100M+</span>
+          <small>ALTIMETRIA</small>
+        </div>
+        <div class="stat">
+          <span>XCP</span>
+          <small>MODALIDADE</small>
+        </div>
+        <div class="stat">
+          <span>100%</span>
+          <small>ADRENALINA</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONSULTA DE INSCRIÇÃO -->
+  <section class="consultation-section" id="consulta-inscricao">
+    <div class="container consultation-layout">
+      <div class="consultation-intro reveal">
+        <span class="section-label">ÁREA DO ATLETA</span>
+        <h2>CONSULTE SUA <em>INSCRIÇÃO</em></h2>
+        <p>Consulte o status da sua inscrição usando o CPF informado no cadastro.</p>
+
+        <div class="consultation-note">
+          <strong>🔒 SEUS DADOS</strong>
+          <span>
+            A consulta pública exibe apenas as informações necessárias
+            para identificar sua inscrição.
+          </span>
+        </div>
+      </div>
+
+      <div class="consultation-card reveal">
+        <form class="consultation-form" id="form-consulta">
+          <label for="consulta-cpf">CPF</label>
+          <div class="consultation-input-row">
+            <input autocomplete="off" id="consulta-cpf" maxlength="14" name="cpf" placeholder="000.000.000-00" required type="text"/>
+            <button class="btn btn-primary" type="submit">CONSULTAR</button>
+          </div>
+          <p class="consultation-hint">Informe o mesmo CPF utilizado na inscrição.</p>
+        </form>
+
+        <div class="consulta-state" hidden id="consulta-loading">CONSULTANDO INSCRIÇÃO...</div>
+        <div class="consulta-state consulta-error" hidden id="consulta-erro"></div>
+
+        <div class="registration-result" hidden id="consulta-resultado">
+          <div class="result-top">
+            <span>ITAITINGA MTB RACE</span>
+            <strong id="resultado-numero">#000</strong>
+          </div>
+
+          <div class="result-athlete">
+            <small>ATLETA</small>
+            <strong id="resultado-nome">—</strong>
+          </div>
+
+          <div class="result-category">
+            <small>CATEGORIA</small>
+            <strong id="resultado-categoria">—</strong>
+          </div>
+
+          <div class="result-status" id="resultado-status">
+            <span id="resultado-status-text">—</span>
+          </div>
+
+          <p class="result-message" id="resultado-mensagem"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSCRIÇÃO -->
+  <section class="registration-section" id="inscricoes">
+    <div class="container registration-layout">
+      <div class="registration-intro reveal">
+        <span class="section-label">INSCRIÇÕES</span>
+        <h2>GARANTA SUA <em>VAGA</em></h2>
+        <p>
+          Preencha seus dados, escolha a categoria disponível e siga para o pagamento da sua inscrição.
+        </p>
+
+        <div class="registration-notes">
+          <div><strong>01</strong><span>Preencha seus dados corretamente.</span></div>
+          <div><strong>02</strong><span>Escolha sua categoria.</span></div>
+          <div><strong>03</strong><span>Finalize e siga direto para o pagamento.</span></div>
+        </div>
+      </div>
+
+      <form class="registration-form reveal" id="form-inscricao">
+        <div class="form-header">
+          <span>ITAITINGA MTB RACE</span>
+          <strong>FICHA DO ATLETA</strong>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group full">
+            <label for="nome">Nome completo *</label>
+            <input id="nome" name="nome" placeholder="Digite seu nome completo" required type="text"/>
+          </div>
+
+          <div class="form-group">
+            <label for="cpf">CPF *</label>
+            <input id="cpf" maxlength="14" name="cpf" placeholder="000.000.000-00" required type="text"/>
+          </div>
+
+          <div class="form-group">
+            <label for="dataNascimento">Data de nascimento *</label>
+            <input id="dataNascimento" name="dataNascimento" required type="date"/>
+          </div>
+
+          <div class="form-group">
+            <label for="estado">Estado *</label>
+            <select id="estado" name="estado" required>
+              <option value="">Selecione o estado</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="cidade">Cidade *</label>
+            <select disabled id="cidade" name="cidade" required>
+              <option value="">Selecione primeiro o estado</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="pcd">É PCD? *</label>
+            <select id="pcd" name="pcd" required>
+              <option value="">Selecione</option>
+              <option value="Não">Não</option>
+              <option value="Sim">Sim</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="equipe">Nome da equipe</label>
+            <input id="equipe" name="equipe" placeholder="Digite o nome da equipe" type="text"/>
+          </div>
+
+          <div class="form-group">
+            <label for="email">E-mail *</label>
+            <input id="email" name="email" placeholder="seuemail@email.com" required type="email"/>
+          </div>
+
+          <div class="form-group">
+            <label for="telefone">WhatsApp *</label>
+            <input id="telefone" name="telefone" placeholder="(85) 9 9999-9999" required type="tel"/>
+          </div>
+
+          <div class="form-group">
+            <label for="lote">Lote</label>
+            <input id="lote" name="lote" readonly type="text" value="CARREGANDO..."/>
+          </div>
+
+          <div class="form-group">
+            <label for="categoria">Categoria *</label>
+            <select disabled id="categoria" name="categoria" required>
+              <option value="">CARREGANDO CATEGORIAS...</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="valor">Valor</label>
+            <input id="valor" name="valor" readonly type="text" value="R$ 0,00"/>
+          </div>
+
+          <div class="form-check full">
+            <input id="termos" name="termos" required type="checkbox"/>
+            <label for="termos">
+              Declaro que as informações preenchidas são verdadeiras e
+              concordo com o regulamento da prova. *
+            </label>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-submit" type="submit">
+          ENVIAR INSCRIÇÃO <span>→</span>
+        </button>
+
+        <p class="form-disclaimer">
+          * Campos obrigatórios. O valor da inscrição é definido pelo lote vigente da organização.
+        </p>
+
+        <div class="form-success" hidden id="formSuccess"></div>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer" id="contato">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <img alt="Itaitinga MTB Race" src="assets/logo-itaitinga-mtb.png"/>
+      <p>
+        Pedale. Supere. Conquiste.<br/>
+        Nos vemos na trilha!
+      </p>
+    </div>
+
+    <div>
+      <span class="footer-title">EVENTO</span>
+      <strong>Itaitinga MTB Race</strong>
+      <p>Itaitinga - Ceará</p>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container">
+      <span>© 2026 Itaitinga MTB Race - Todos os direitos reservados.</span>
+      <span>PEDALE • SUPERE • CONQUISTE</span>
+    </div>
+  </div>
 </footer>
+
 <script src="js/main.js"></script>
 </body>
 </html>
