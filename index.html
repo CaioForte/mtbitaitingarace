@@ -90,32 +90,39 @@
 
         <!-- Resumo rápido do evento -->
         <div class="hero-info reveal">
-          <div>
-            <small>DATA</small>
-            <strong>01 NOV 2026</strong>
-            <span>DOMINGO</span>
-          </div>
 
-          <div>
-            <small>LOCAL</small>
-            <strong>ITAITINGA - CE</strong>
-            <span>CEARÁ</span>
-          </div>
+  <div>
+    <small>DATA</small>
+    <strong id="siteDataEvento">01 NOV 2026</strong>
+    <span>DOMINGO</span>
+  </div>
 
-          <div>
-            <small>MODALIDADE</small>
-            <strong>XCP</strong>
-            <span>MOUNTAIN BIKE</span>
-          </div>
+  <div>
+    <small>LOCAL</small>
+    <strong>
+      <span id="siteCidade">ITAITINGA</span> -
+      <span id="siteEstado">CE</span>
+    </strong>
+    <span>CEARÁ</span>
+  </div>
 
-          <div>
-            <small>DESAFIO</small>
-            <strong>50 KM</strong>
-            <span>1100M+ ALTIMETRIA</span>
-          </div>
-        </div>
+  <div>
+    <small>MODALIDADE</small>
+    <strong id="siteModalidade">XCP</strong>
+    <span>MOUNTAIN BIKE</span>
+  </div>
 
-      </div>
+  <div>
+    <small>DESAFIO</small>
+    <strong>
+      <span id="siteDistancia">50</span> KM
+    </strong>
+    <span>
+      <span id="siteAltimetria">1100</span>M+ ALTIMETRIA
+    </span>
+  </div>
+
+</div>
     </section>
 
 
@@ -652,16 +659,33 @@
             </div>
 
             <div class="form-group">
-              <label for="categoria">Categoria *</label>
-              <select id="categoria" name="categoria" required disabled>
-                <option value="">CARREGANDO CATEGORIAS...</option>
-              </select>
-            </div>
+  <label for="lote">Lote</label>
+  <input
+    type="text"
+    id="lote"
+    name="lote"
+    value="CARREGANDO..."
+    readonly
+  >
+</div>
 
-            <div class="form-group">
-              <label for="valor">Valor</label>
-              <input type="text" id="valor" name="valor" value="R$ 0,00" readonly>
-            </div>
+<div class="form-group">
+  <label for="categoria">Categoria *</label>
+  <select id="categoria" name="categoria" required disabled>
+    <option value="">CARREGANDO CATEGORIAS...</option>
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="valor">Valor</label>
+  <input
+    type="text"
+    id="valor"
+    name="valor"
+    value="R$ 0,00"
+    readonly
+  >
+</div>
 
             <div class="form-check full">
               <input type="checkbox" id="termos" name="termos" required>

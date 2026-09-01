@@ -10,6 +10,8 @@ const WHATSAPP_INSCRICOES = "5585991680867";
 
 document.addEventListener("DOMContentLoaded", () => {
 
+  carregarConfiguracaoSitePublico_();
+
   const EVENT_DATE = "2026-11-01T08:00:00-03:00";
 
   // ----------------------------------------------------------
@@ -414,184 +416,598 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   // ----------------------------------------------------------
-  // CATEGORIAS
-  // ----------------------------------------------------------
+// LOTE + CATEGORIAS
+// ----------------------------------------------------------
 
-  const categoriaSelect =
-    document.getElementById("categoria");
+const loteInput =
+  document.getElementById("lote");
 
-  const valorInput =
-    document.getElementById("valor");
+const categoriaSelect =
+  document.getElementById("categoria");
 
-  async function carregarCategorias() {
+const valorInput =
+  document.getElementById("valor");
 
-    if (!categoriaSelect) {
-      return;
+const nascimentoInput =
+  document.getElementById("dataNascimento");
+
+let loteVigente = null;
+let categoriasDisponiveis = [];
+
+
+// ----------------------------------------------------------
+// CALCULAR IDADE
+// ----------------------------------------------------------
+
+function calcularIdade(dataNascimento) {
+
+  if (!dataNascimento) {
+    return null;
+  }
+
+  const nascimento =
+    new Date(
+      dataNascimento + "T00:00:00"
+    );
+
+  if (isNaN(nascimento.getTime())) {
+    return null;
+  }
+
+  const hoje =
+    new Date();
+
+  let idade =
+    hoje.getFullYear() -
+    nascimento.getFullYear();
+
+  const mes =
+    hoje.getMonth() -
+    nascimento.getMonth();
+
+  if (
+    mes < 0 ||
+    (
+      mes === 0 &&
+      hoje.getDate() < nascimento.getDate()
+    )
+  ) {
+
+    idade--;
+  }
+
+  return idade;
+}
+
+// ----------------------------------------------------------
+// CARREGAR LOTE VIGENTE
+// ----------------------------------------------------------
+
+async function carregarLoteVigente() {
+
+  if (!loteInput) {
+    return false;
+  }
+
+  loteInput.value =
+    "CARREGANDO...";
+
+  try {
+
+    const response =
+      await fetch(
+        GOOGLE_SCRIPT_URL +
+        "?action=publicLoteVigente&_=" +
+        Date.now(),
+        {
+          method: "GET",
+          cache: "no-store"
+        }
+      );
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Não foi possível carregar o lote vigente."
+      );
     }
 
-    categoriaSelect.disabled = true;
+    const envelope =
+      await response.json();
 
-    categoriaSelect.innerHTML =
-      '<option value="">Carregando categorias...</option>';
+    const resultado =
+      extrairResultado(envelope);
 
-    try {
+    const lote =
+      resultado &&
+      resultado.id
+        ? resultado
+        : (
+            envelope &&
+            envelope.id
+              ? envelope
+              : null
+          );
 
-      const response =
-        await fetch(
-          GOOGLE_SCRIPT_URL +
-          "?action=publicCategorias&_=" +
-          Date.now(),
-          {
-            method: "GET",
-            cache: "no-store"
-          }
-        );
+    if (!lote) {
 
-      if (!response.ok) {
-        throw new Error(
-          "Não foi possível carregar as categorias."
-        );
-      }
+      throw new Error(
+        envelope.mensagem ||
+        resultado?.mensagem ||
+        "Nenhum lote vigente disponível."
+      );
+    }
 
-      const envelope =
-        await response.json();
 
-      const resultado =
-        extrairResultado(envelope);
+    // LOTE ENCONTRADO
 
-      const categorias =
-        Array.isArray(
-          resultado.categorias
-        )
-          ? resultado.categorias
-          : Array.isArray(
-              envelope.categorias
-            )
-            ? envelope.categorias
-            : [];
+    loteVigente =
+      lote;
 
-      if (!categorias.length) {
-        throw new Error(
-          envelope.mensagem ||
-          resultado.mensagem ||
-          "Nenhuma categoria cadastrada."
-        );
-      }
+    loteInput.value =
+      obterValor(
+        lote,
+        "nome"
+      ) || "—";
 
-      categoriaSelect.innerHTML =
-        '<option value="">Selecione sua categoria</option>';
 
-      categorias.forEach(categoria => {
+    // VALOR DO LOTE
 
-        const nome =
+    if (valorInput) {
+
+      const valor =
+        Number(
           obterValor(
-            categoria,
-            "nome",
-            "categoria",
-            "descricao"
-          );
-
-        const valor =
-          Number(
-            obterValor(
-              categoria,
-              "valor",
-              "preco",
-              "preço"
-            ) || 0
-          );
-
-        if (!nome) return;
-
-        const option =
-          document.createElement("option");
-
-        option.value = nome;
-
-        option.textContent =
-          valor > 0
-            ? `${nome} — R$ ${valor.toFixed(2).replace(".", ",")}`
-            : nome;
-
-        option.dataset.valor =
-          String(valor);
-
-        categoriaSelect.appendChild(
-          option
+            lote,
+            "valor"
+          ) || 0
         );
-      });
 
-      if (
-        categoriaSelect.options.length <= 1
-      ) {
-        throw new Error(
-          "Nenhuma categoria cadastrada."
-        );
-      }
+      valorInput.value =
+        "R$ " +
+        valor
+          .toFixed(2)
+          .replace(".", ",");
+    }
 
-      categoriaSelect.disabled =
-        false;
 
-      function atualizarValor() {
+    // EXISTE LOTE VIGENTE
 
-        if (!valorInput) return;
+    return true;
 
-        const option =
-          categoriaSelect.options[
-            categoriaSelect.selectedIndex
-          ];
 
-        if (
-          !option ||
-          !option.value
-        ) {
+  } catch (erro) {
 
-          valorInput.value =
-            "R$ 0,00";
+    console.error(
+      "Erro ao carregar lote:",
+      erro
+    );
 
-          return;
-        }
 
-        const valor =
-          Number(
-            option.dataset.valor || 0
-          );
+    // NÃO EXISTE LOTE VIGENTE
 
-        valorInput.value =
-          "R$ " +
-          valor
-            .toFixed(2)
-            .replace(".", ",");
-      }
+    loteVigente =
+      null;
 
-      categoriaSelect.addEventListener(
-        "change",
-        atualizarValor
-      );
+    loteInput.value =
+      "Nenhum lote disponível";
 
-      atualizarValor();
 
-    } catch (erro) {
+    if (valorInput) {
 
-      console.error(
-        "Erro ao carregar categorias:",
-        erro
-      );
+      valorInput.value =
+        "R$ 0,00";
+    }
+
+
+    // BLOQUEIA CATEGORIAS
+
+    if (categoriaSelect) {
 
       categoriaSelect.innerHTML =
-        '<option value="">Não foi possível carregar as categorias</option>';
+        '<option value="">Inscrições indisponíveis no momento</option>';
 
       categoriaSelect.disabled =
         true;
-
-      if (valorInput) {
-        valorInput.value =
-          "R$ 0,00";
-      }
     }
+
+
+    return false;
+  }
+}
+
+// ----------------------------------------------------------
+// CARREGAR CATEGORIAS
+// ----------------------------------------------------------
+
+async function carregarCategorias() {
+
+  if (!categoriaSelect) {
+    return;
   }
 
-  carregarCategorias();
+  categoriaSelect.disabled =
+    true;
+
+  categoriaSelect.innerHTML =
+    '<option value="">Carregando categorias...</option>';
+
+  try {
+
+    const response =
+      await fetch(
+        GOOGLE_SCRIPT_URL +
+        "?action=publicCategorias&_=" +
+        Date.now(),
+        {
+          method: "GET",
+          cache: "no-store"
+        }
+      );
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Não foi possível carregar as categorias."
+      );
+    }
+
+    const envelope =
+      await response.json();
+
+    const resultado =
+      extrairResultado(envelope);
+
+    const categorias =
+      Array.isArray(
+        resultado.categorias
+      )
+        ? resultado.categorias
+        : Array.isArray(
+            envelope.categorias
+          )
+          ? envelope.categorias
+          : [];
+
+    if (!categorias.length) {
+
+      throw new Error(
+        envelope.mensagem ||
+        resultado.mensagem ||
+        "Nenhuma categoria cadastrada."
+      );
+    }
+
+    categoriasDisponiveis =
+      categorias.filter(
+        categoria =>
+          categoria &&
+          (
+            categoria.ativo === true ||
+            categoria.ativo === undefined
+          )
+      );
+
+    atualizarCategoriasPorIdade();
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao carregar categorias:",
+      erro
+    );
+
+    categoriasDisponiveis =
+      [];
+
+    categoriaSelect.innerHTML =
+      '<option value="">Não foi possível carregar as categorias</option>';
+
+    categoriaSelect.disabled =
+      true;
+  }
+}
+
+
+// ----------------------------------------------------------
+// FILTRAR CATEGORIAS PELA IDADE
+// ----------------------------------------------------------
+
+function atualizarCategoriasPorIdade() {
+
+  if (!categoriaSelect) {
+    return;
+  }
+
+  const idade =
+    calcularIdade(
+      nascimentoInput?.value
+    );
+
+  categoriaSelect.innerHTML =
+    '<option value="">Selecione sua categoria</option>';
+
+  if (idade === null) {
+
+    categoriaSelect.disabled =
+      true;
+
+    categoriaSelect.innerHTML =
+      '<option value="">Informe sua data de nascimento</option>';
+
+    return;
+  }
+
+  const categoriasCompativeis =
+    categoriasDisponiveis.filter(
+      categoria => {
+
+        const idadeMaxima =
+          categoria.idadeMaxima;
+
+        /*
+         * Sem idade máxima:
+         * categoria disponível para qualquer idade.
+         */
+
+        if (
+          idadeMaxima === null ||
+          idadeMaxima === undefined ||
+          idadeMaxima === ""
+        ) {
+
+          return true;
+        }
+
+        return idade <=
+          Number(idadeMaxima);
+      }
+    );
+
+  categoriasCompativeis.forEach(
+    categoria => {
+
+      const nome =
+        obterValor(
+          categoria,
+          "nome",
+          "categoria",
+          "descricao"
+        );
+
+      if (!nome) {
+        return;
+      }
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        nome;
+
+      option.textContent =
+        nome;
+
+      categoriaSelect.appendChild(
+        option
+      );
+    }
+  );
+
+  if (
+    categoriasCompativeis.length
+  ) {
+
+    categoriaSelect.disabled =
+      false;
+
+  } else {
+
+    categoriaSelect.disabled =
+      true;
+
+    categoriaSelect.innerHTML =
+      '<option value="">Nenhuma categoria disponível para sua idade</option>';
+  }
+}
+
+
+// ----------------------------------------------------------
+// ALTERAÇÃO DA DATA DE NASCIMENTO
+// ----------------------------------------------------------
+
+nascimentoInput?.addEventListener(
+  "change",
+  atualizarCategoriasPorIdade
+);
+
+
+// ----------------------------------------------------------
+// INICIALIZAÇÃO
+// ----------------------------------------------------------
+
+async function carregarDadosFormulario() {
+
+  const temLote =
+    await carregarLoteVigente();
+
+  // Sem lote vigente:
+  // não carrega categorias e bloqueia inscrição.
+  if (!temLote) {
+
+    if (categoriaSelect) {
+
+      categoriaSelect.innerHTML =
+        '<option value="">Inscrições indisponíveis no momento</option>';
+
+      categoriaSelect.disabled =
+        true;
+    }
+
+    if (submitButton) {
+
+      submitButton.disabled =
+        true;
+
+      submitButton.innerHTML =
+        "INSCRIÇÕES INDISPONÍVEIS";
+    }
+
+    return;
+  }
+
+
+  // Com lote vigente:
+  // carrega normalmente as categorias.
+  await carregarCategorias();
+
+
+  if (submitButton) {
+
+    submitButton.disabled =
+      false;
+
+    submitButton.innerHTML =
+      'ENVIAR INSCRIÇÃO <span>→</span>';
+  }
+}
+
+async function carregarConfiguracaoSitePublico_() {
+
+  try {
+
+    const url =
+      GOOGLE_SCRIPT_URL +
+      "?action=publicSiteConfig";
+
+    const response =
+      await fetch(url);
+
+    const json =
+      await response.json();
+
+    if (!json.sucesso) {
+      throw new Error(
+        json.mensagem ||
+        "Erro ao carregar informações."
+      );
+    }
+
+    const dados =
+      json.dados || {};
+
+
+    function preencherTexto(id, valor) {
+
+      const el =
+        document.getElementById(id);
+
+      if (
+        el &&
+        valor !== undefined &&
+        valor !== null &&
+        valor !== ""
+      ) {
+
+        el.textContent = valor;
+
+      }
+
+    }
+
+
+    preencherTexto(
+      "siteNomeEvento",
+      dados.nomeEvento
+    );
+
+    preencherTexto(
+      "siteModalidade",
+      dados.modalidade
+    );
+
+    preencherTexto(
+      "siteCidade",
+      dados.cidade
+    );
+
+    preencherTexto(
+      "siteEstado",
+      dados.estado
+    );
+
+    preencherTexto(
+      "siteDistancia",
+      dados.distancia
+    );
+
+    preencherTexto(
+      "siteAltimetria",
+      dados.altimetria
+    );
+
+    preencherTexto(
+      "siteHorario",
+      dados.horario
+    );
+
+
+    if (dados.dataEvento) {
+
+  const partes =
+    dados.dataEvento.split("-");
+
+  if (partes.length === 3) {
+
+    const meses = [
+      "JAN",
+      "FEV",
+      "MAR",
+      "ABR",
+      "MAI",
+      "JUN",
+      "JUL",
+      "AGO",
+      "SET",
+      "OUT",
+      "NOV",
+      "DEZ"
+    ];
+
+    const ano = partes[0];
+    const mes =
+      meses[
+        Number(partes[1]) - 1
+      ];
+    const dia = partes[2];
+
+    const dataFormatada =
+      `${dia} ${mes} ${ano}`;
+
+    preencherTexto(
+      "siteDataEvento",
+      dataFormatada
+    );
+
+  }
+
+}
+
+
+  } catch (err) {
+
+    console.warn(
+      "Erro ao carregar configurações do site:",
+      err
+    );
+
+  }
+
+}
+
+carregarDadosFormulario();
 
   // ----------------------------------------------------------
   // FORMULÁRIO DE INSCRIÇÃO
