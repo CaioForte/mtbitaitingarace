@@ -1461,11 +1461,49 @@ carregarDadosFormulario();
     "url"
   );
 
-          // --------------------------------------------
-          // MOSTRA SUCESSO
-          // --------------------------------------------
+        // --------------------------------------------
+// REDIRECIONA PARA O PAGAMENTO
+// --------------------------------------------
 
-          if (formSuccess) {
+if (checkoutUrl) {
+
+  if (formSuccess) {
+
+    formSuccess.innerHTML = `
+      <strong>INSCRIÇÃO REALIZADA!</strong>
+
+      <span>
+        Número da inscrição:
+        <strong>#${numero}</strong>
+      </span>
+
+      <span>
+        Redirecionando para o pagamento...
+      </span>
+    `;
+
+    formSuccess.hidden = false;
+  }
+
+
+  setTimeout(() => {
+
+    window.location.href =
+      checkoutUrl;
+
+  }, 900);
+
+
+  return;
+}
+
+
+/*
+ * Se por algum motivo não vier
+ * checkout_url do servidor.
+ */
+
+if (formSuccess) {
 
   formSuccess.innerHTML = `
     <strong>INSCRIÇÃO RECEBIDA!</strong>
@@ -1475,73 +1513,15 @@ carregarDadosFormulario();
       <strong>#${numero}</strong>
     </span>
 
-    <span>
-      Valor da inscrição:
-      <strong>
-        R$ ${Number(
-          obterValor(
-            resultado,
-            "valor"
-          ) ||
-          obterValor(
-            envelope,
-            "valor"
-          ) ||
-          0
-        ).toFixed(2).replace(".", ",")}
-      </strong>
-    </span>
-
-    ${
-      checkoutUrl
-        ? `
-          <a
-            class="btn btn-primary form-success-pagamento"
-            href="${checkoutUrl}"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            💳 PAGAR MINHA INSCRIÇÃO
-          </a>
-        `
-        : `
-          <small>
-            Sua inscrição foi registrada e está aguardando confirmação.
-          </small>
-        `
-    }
-
-    ${
-      linkWhatsapp
-        ? `
-          <a
-            class="btn btn-whatsapp form-success-whatsapp"
-            href="${linkWhatsapp}"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            💬 CONFIRMAR MINHA INSCRIÇÃO PELO WHATSAPP
-          </a>
-        `
-        : ""
-    }
-
-    ${
-      checkoutUrl
-        ? `
-          <small>
-            Você será direcionado para o ambiente seguro da InfinitePay
-            para concluir o pagamento.
-          </small>
-        `
-        : ""
-    }
+    <small>
+      Sua inscrição foi registrada,
+      mas não foi possível abrir
+      o pagamento automaticamente.
+    </small>
   `;
 
-  formSuccess.hidden =
-    false;
+  formSuccess.hidden = false;
 }
-
           // --------------------------------------------
           // LIMPA FORMULÁRIO
           // --------------------------------------------
