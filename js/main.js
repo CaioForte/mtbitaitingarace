@@ -1464,38 +1464,57 @@ carregarDadosFormulario();
         // --------------------------------------------
 // REDIRECIONA PARA O PAGAMENTO
 // --------------------------------------------
-
 if (checkoutUrl) {
 
-  if (formSuccess) {
+  const modalSucesso =
+    document.getElementById(
+      "modalInscricaoSucesso"
+    );
 
-    formSuccess.innerHTML = `
-      <strong>INSCRIÇÃO REALIZADA!</strong>
+  const btnIrPagamento =
+    document.getElementById(
+      "btnIrPagamento"
+    );
 
-      <span>
-        Número da inscrição:
-        <strong>#${numero}</strong>
-      </span>
+  if (
+    modalSucesso &&
+    btnIrPagamento
+  ) {
 
-      <span>
-        Redirecionando para o pagamento...
-      </span>
-    `;
+    modalSucesso.hidden = false;
 
-    formSuccess.hidden = false;
+    btnIrPagamento.onclick = () => {
+
+      window.location.href =
+        checkoutUrl;
+
+    };
+
+  } else {
+
+    if (formSuccess) {
+
+      formSuccess.innerHTML = `
+        <strong>INSCRIÇÃO REALIZADA!</strong>
+
+        <span>
+          Número da inscrição:
+          <strong>#${numero}</strong>
+        </span>
+
+        <small>
+          Clique para continuar com o pagamento.
+        </small>
+      `;
+
+      formSuccess.hidden = false;
+    }
+
   }
-
-
-  setTimeout(() => {
-
-    window.location.href =
-      checkoutUrl;
-
-  }, 900);
-
 
   return;
 }
+
 
 
 /*
