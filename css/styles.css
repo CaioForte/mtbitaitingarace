@@ -2113,3 +2113,16 @@ input.cpf-invalido {
   box-shadow:
     0 8px 30px rgba(0, 0, 0, 0.35);
 }
+
+@media (max-width: 780px) {
+
+  .site-header.scrolled {
+    background: rgba(8, 10, 8, 0.98) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    box-shadow:
+      0 8px 30px rgba(0, 0, 0, 0.40);
+  }
+
+}
