@@ -1994,3 +1994,104 @@ input.cpf-invalido {
     width: 100%;
   }
 }
+
+
+.success-modal[hidden] {
+  display: none !important;
+}
+
+.success-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.success-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(5px);
+}
+
+.success-modal-card {
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+  max-width: 430px;
+
+  padding: 34px 28px;
+
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+
+  text-align: center;
+
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, 0.55);
+}
+
+.success-modal-icon {
+  width: 68px;
+  height: 68px;
+
+  margin: 0 auto 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #8dc63f;
+  color: #111;
+
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.success-modal-card h2 {
+  margin: 0 0 14px;
+
+  color: #fff;
+
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.success-modal-card p {
+  margin: 8px 0;
+
+  color: rgba(255, 255, 255, 0.78);
+
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.success-modal-payment-text {
+  margin-top: 18px !important;
+  margin-bottom: 24px !important;
+}
+
+.success-modal-card .btn {
+  width: 100%;
+  justify-content: center;
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+@media (max-width: 520px) {
+  .success-modal-card {
+    padding: 28px 20px;
+    border-radius: 16px;
+  }
+
+  .success-modal-card h2 {
+    font-size: 22px;
+  }
+}
