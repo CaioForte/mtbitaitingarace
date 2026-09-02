@@ -2095,3 +2095,21 @@ input.cpf-invalido {
     font-size: 22px;
   }
 }
+
+/* HEADER AO ROLAR A PÁGINA */
+
+.site-header {
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    backdrop-filter 0.3s ease;
+}
+
+.site-header.scrolled {
+  background: rgba(8, 10, 8, 0.96);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.35);
+}
