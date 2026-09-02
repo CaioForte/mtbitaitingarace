@@ -229,31 +229,30 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
-  // ----------------------------------------------------------
-  // HEADER
-  // ----------------------------------------------------------
+ // ----------------------------------------------------------
+// HEADER AO ROLAR A PÁGINA
+// ----------------------------------------------------------
 
-  const header =
-    document.querySelector(".site-header");
+const siteHeader =
+  document.querySelector(".site-header");
 
-  function atualizarHeader() {
+function atualizarHeader() {
 
-    if (!header) return;
+  if (!siteHeader) return;
 
-    header.classList.toggle(
-      "scrolled",
-      window.scrollY > 40
-    );
-  }
-
-  window.addEventListener(
-    "scroll",
-    atualizarHeader,
-    { passive: true }
+  siteHeader.classList.toggle(
+    "scrolled",
+    window.scrollY > 20
   );
+}
 
-  atualizarHeader();
+window.addEventListener(
+  "scroll",
+  atualizarHeader,
+  { passive: true }
+);
 
+atualizarHeader();
   // ----------------------------------------------------------
   // CONTAGEM REGRESSIVA
   // ----------------------------------------------------------
