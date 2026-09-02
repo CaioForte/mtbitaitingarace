@@ -229,30 +229,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
- // ----------------------------------------------------------
-// HEADER AO ROLAR A PÁGINA
-// ----------------------------------------------------------
-
-const siteHeader =
-  document.querySelector(".site-header");
-
-function atualizarHeader() {
-
-  if (!siteHeader) return;
-
-  siteHeader.classList.toggle(
-    "scrolled",
-    window.scrollY > 20
-  );
-}
-
-window.addEventListener(
-  "scroll",
-  atualizarHeader,
-  { passive: true }
-);
-
-atualizarHeader();
   // ----------------------------------------------------------
   // CONTAGEM REGRESSIVA
   // ----------------------------------------------------------
