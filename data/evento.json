@@ -2,14 +2,11 @@
   "evento": "MTB2026",
   "nomeEvento": "Itaitinga MTB Race",
   "modalidade": "XC",
-  "dataEvento": "2026-11-10",
+  "dataEvento": "2026-10-01",
   "horario": "18:00",
   "cidade": "Itaitinga",
   "estado": "CE",
   "distancia": "25",
   "altimetria": "1100",
-  "regulamento": "Regulamento oficial do Itaitinga MTB Race — XC 2026.",
-  "tipoProva": "Mountain Bike",
-  "heroTitulo": "SUPERE SEUS LIMITES.",
-  "heroDestaque": "VIVA ESSA AVENTURA!"
+  "regulamento": "Regulamento oficial do Itaitinga MTB Race — XC 2026."
 }
