@@ -14,7 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // Será ativado quando a nova configuração pública for adicionada ao painel.
   // carregarConfiguracaoSitePublico_();
 
-  const EVENT_DATE = "2026-11-01T08:00:00-03:00";
+  let EVENT_DATE = "2026-11-01T08:00:00-03:00";
+
+  window.addEventListener("evento-config-carregado", (event) => {
+    const c = event.detail || {};
+    if (c.dataEvento) EVENT_DATE = `${c.dataEvento}T${c.horario || "08:00"}:00-03:00`;
+  });
 
   // ----------------------------------------------------------
   // UTILITÁRIOS
