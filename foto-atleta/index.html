@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101310">
+  <title>Foto do Atleta | Itaitinga MTB Race 2026</title>
+  <meta name="description" content="Coloque sua foto na moldura oficial do Itaitinga MTB Race 2026 e compartilhe nos Stories.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/foto-atleta.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">IT</span><span>ITAITINGA <b>TRAIL RUN</b><small>15 NOV 2026 · ITAITINGA–CE</small></span></div>
+      <span class="topbar-label">FOTO DO ATLETA</span>
+    </header>
+    <div class="workspace">
+      <section class="preview-column" aria-label="Prévia da foto">
+        <div class="preview-head"><span>PRÉVIA DO STORY</span><span id="previewStatus">AGUARDANDO FOTO</span></div>
+        <div class="preview-wrap">
+          <div class="canvas-shell">
+            <canvas id="editorCanvas" width="1080" height="1920" aria-label="Foto do atleta na moldura oficial"></canvas>
+            <div class="empty-state" id="emptyState"><span class="empty-icon">+</span><strong>SUA FOTO AQUI</strong><small>Escolha uma foto para começar</small></div>
+          </div>
+        </div>
+        <p class="preview-help">Sua foto permanece no navegador. Nada é enviado para o site.</p>
+      </section>
+      <section class="editor-panel" aria-label="Editar foto do atleta">
+        <div class="editor-heading"><span class="eyebrow">EU VOU · 2026</span><h1>A SUA FOTO<br><em>NA LARGADA.</em></h1><p>Escolha, ajuste e compartilhe sua foto com a moldura oficial.</p></div>
+        <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+        <button class="upload-box" id="choosePhotoButton" type="button"><span class="upload-icon">+</span><span><strong>ESCOLHER FOTO</strong><small>JPG, PNG ou WEBP</small></span></button>
+        <div class="controls" id="controls" hidden>
+          <div class="control-heading"><strong>AJUSTAR FOTO</strong><span>Arraste a imagem na prévia</span></div>
+          <label class="range-field"><span>ZOOM</span><input id="zoomRange" type="range" min="1" max="3" value="1" step="0.01" aria-label="Aproximar foto"></label>
+          <button class="reset-button" id="resetButton" type="button">Redefinir posição</button>
+        </div>
+        <div class="action-box">
+          <button class="btn btn-primary" id="downloadButton" type="button" disabled>BAIXAR FOTO <span aria-hidden="true">↓</span></button>
+          <button class="btn btn-outline" id="shareButton" type="button" disabled>COMPARTILHAR <span aria-hidden="true">↗</span></button>
+          <small>Formato Story · 1080 × 1920 px</small>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="js/foto-atleta.js"></script>
+</body>
+</html>

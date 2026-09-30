@@ -6,12 +6,12 @@
   <title>Itaitinga MTB Race | XCP 2026</title>
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/favicon.png">
-  <meta name="description" content="Itaitinga MTB Race - XCP 2026. Pedale, supere, conquiste."/>
+  <meta name="description" content="Itaitinga MTB Race - XCP 2026. Pedale, supere e conquiste em uma experiência de mountain bike em Itaitinga, Ceará."/>
   <meta name="theme-color" content="#050505"/>
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin href="https://fonts.gstatic.com" rel="preconnect"/>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <link href="css/styles.css" rel="stylesheet"/>
+  <link href="css/styles.css?v=docs3" rel="stylesheet"/>
 </head>
 <body>
 
@@ -27,6 +27,7 @@
 
     <nav class="main-nav" id="mainNav">
       <a href="#sobre">SOBRE</a>
+      <a href="foto-atleta/index.html" target="_blank" rel="noopener">FOTO DO ATLETA</a>
       <a class="nav-consult" href="#consulta-inscricao">CONSULTAR INSCRIÇÃO</a>
       <a class="nav-cta js-open-registration" href="#inscricoes">INSCREVA-SE</a>
     </nav>
@@ -53,72 +54,222 @@
           trilha, velocidade e superação.
         </p>
 
+
+        <div class="race-countdown" id="raceCountdown" aria-label="Contagem regressiva para a prova">
+          <div class="race-countdown-heading">
+            <span>FALTAM</span>
+            <strong>PARA A LARGADA</strong>
+          </div>
+
+          <div class="race-countdown-grid">
+            <div class="race-countdown-item">
+              <strong id="countdownDays">00</strong>
+              <span>DIAS</span>
+            </div>
+            <div class="race-countdown-item">
+              <strong id="countdownHours">00</strong>
+              <span>HORAS</span>
+            </div>
+            <div class="race-countdown-item">
+              <strong id="countdownMinutes">00</strong>
+              <span>MIN</span>
+            </div>
+            <div class="race-countdown-item">
+              <strong id="countdownSeconds">00</strong>
+              <span>SEG</span>
+            </div>
+          </div>
+
+          <div class="race-countdown-live" id="raceCountdownLive" hidden>
+            A PROVA COMEÇOU!
+          </div>
+        </div>
+
         <div class="hero-actions">
           <a class="btn btn-primary js-open-registration" href="#inscricoes">FAZER INSCRIÇÃO <span>→</span></a>
           <a class="btn btn-outline js-open-consultation" href="#consulta-inscricao">CONSULTAR INSCRIÇÃO <span>→</span></a>
         </div>
       </div>
-
-      <div class="hero-info reveal">
-        <div>
-          <small>DATA</small>
-          <strong id="siteDataEvento">01 NOV 2026</strong>
-          <span>DOMINGO</span>
-        </div>
-        <div>
-          <small>LOCAL</small>
-          <strong><span id="siteCidade">ITAITINGA</span> - <span id="siteEstado">CE</span></strong>
-          <span>CEARÁ</span>
-        </div>
-        <div>
-          <small>MODALIDADE</small>
-          <strong id="siteModalidade">XCP</strong>
-          <span>MOUNTAIN BIKE</span>
-        </div>
-        <div>
-          <small>DESAFIO</small>
-          <strong><span id="siteDistancia">50</span> KM</strong>
-          <span><span id="siteAltimetria">1100</span>M+ ALTIMETRIA</span>
-        </div>
-      </div>
     </div>
   </section>
+<!-- INFORMAÇÕES PRINCIPAIS DO EVENTO -->
+<section class="event-details">
 
-  <!-- SOBRE -->
-  <section class="section section-dark" id="sobre">
-    <div class="container split-section">
-      <div class="section-copy reveal">
-        <span class="section-label">SOBRE A PROVA</span>
-        <h2>ITAITINGA <em>MTB RACE</em></h2>
-        <p>
-          O Itaitinga MTB Race nasceu para reunir atletas,
-          trilheiros e apaixonados por bicicleta em uma experiência
-          que mistura desafio, natureza e espírito de competição.
-        </p>
-        <p>
-          Prepare-se para encarar subidas, descidas, estradões e
-          trilhas que vão colocar suas pernas e sua mente à prova.
-        </p>
-        <a class="text-link js-open-registration" href="#inscricoes">FAÇA SUA INSCRIÇÃO →</a>
+  <div class="container">
+
+    <div class="event-details-grid">
+
+      <!-- DATA -->
+      <div class="event-detail-card">
+        <span class="event-detail-icon">◆</span>
+
+        <div>
+          <small>DATA DA PROVA</small>
+          <strong>01 NOV 2026</strong>
+          <p>Domingo</p>
+        </div>
       </div>
 
-      <div class="stats-panel reveal">
-        <div class="stat">
-          <span>50 KM</span>
-          <small>PERCURSO</small>
+
+      <!-- INSCRIÇÕES -->
+      <div class="event-detail-card event-detail-featured">
+        <span class="event-detail-icon">✦</span>
+
+        <div>
+          <small>INÍCIO DAS INSCRIÇÕES</small>
+          <strong>07 SET 2026</strong>
+          <p>Garanta sua vaga</p>
         </div>
-        <div class="stat">
-          <span>1100M+</span>
-          <small>ALTIMETRIA</small>
+      </div>
+
+
+      <!-- HORÁRIO -->
+      <div class="event-detail-card">
+        <span class="event-detail-icon">◷</span>
+
+        <div>
+          <small>LARGADA</small>
+          <strong data-config="horario">08:00</strong>
+          <p>Horário previsto</p>
         </div>
-        <div class="stat">
-          <span>XCP</span>
-          <small>MODALIDADE</small>
+      </div>
+
+
+      <!-- LOCAL -->
+      <div class="event-detail-card">
+        <span class="event-detail-icon">⌖</span>
+
+        <div>
+          <small>LOCAL</small>
+          <strong data-config="local">ITAITINGA - CE</strong>
+          <p>Itaitinga - CE</p>
         </div>
-        <div class="stat">
-          <span>100%</span>
-          <small>ADRENALINA</small>
+      </div>
+
+
+      <!-- PERCURSOS -->
+      <div class="event-detail-card">
+        <span class="event-detail-icon">▲</span>
+
+        <div>
+          <small>PERCURSOS</small>
+          <strong><span data-config="distancia">50</span> KM</strong>
+          <p>Mountain Bike</p>
         </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- LOCALIZAÇÃO DO EVENTO -->
+<section class="event-location">
+
+  <div class="container event-location-grid">
+
+    <div class="event-location-copy">
+
+      <span class="section-label">
+        LOCALIZAÇÃO
+      </span>
+
+      <h2>
+        ONDE SERÁ A <em>PROVA</em>
+      </h2>
+
+      <p>
+        Confira no mapa o ponto do evento e utilize
+        o Google Maps para traçar sua rota até o local.
+      </p>
+
+      <a
+        class="btn btn-primary event-location-button"
+        href="https://www.google.com/maps/search/?api=1&query=Itaitinga+CE"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        ABRIR NO GOOGLE MAPS
+        <span>→</span>
+      </a>
+
+    </div>
+
+
+    <div class="event-location-map">
+
+      <iframe
+        title="Localização Itaitinga MTB Race"
+        src="https://www.google.com/maps?q=Itaitinga%20CE&output=embed"
+        loading="lazy"
+        allowfullscreen
+        aria-label="Mapa da localização do Itaitinga MTB Race"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+
+    </div>
+
+  </div>
+
+</section>
+
+  <!-- SOBRE -->
+<section class="section section-dark trail-about" id="sobre">
+  <div class="container">
+    <div class="trail-about-heading reveal">
+      <div>
+        <span class="section-label">SOBRE A PROVA</span>
+        <h2>ENCARA OS <em><span data-config="distancia">50</span> KM?</em></h2>
+      </div>
+      <p>
+        O Itaitinga MTB Race — XCP 2026 reúne trilha, velocidade e superação
+        em um percurso de aproximadamente 50 km e 1.100 m+ de altimetria.
+      </p>
+    </div>
+
+    <div class="trail-challenges">
+      <article class="trail-challenge-card trail-challenge-main reveal">
+        <div class="trail-challenge-number">01</div>
+        <div class="trail-challenge-distance">
+          <strong>50</strong><span>KM</span>
+        </div>
+        <div class="trail-challenge-content">
+          <small>XCP 2026</small>
+          <h3>ITAITINGA MTB RACE</h3>
+          <p>Um percurso com predominância de trilha, subidas, descidas e trechos técnicos para colocar pernas e técnica à prova.</p>
+          <div class="trail-challenge-tags">
+            <span>50 KM</span><span>1100 M+</span><span>MTB</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="trail-about-footer reveal">
+      <span>PEDALE</span><i>•</i><span>SUPERE</span><i>•</i><span>CONQUISTE</span>
+    </div>
+  </div>
+</section>
+
+  <!-- FOTO DO ATLETA -->
+  <section class="athlete-photo-cta">
+    <div class="container">
+      <div class="athlete-photo-cta-card reveal">
+        <div class="athlete-photo-cta-copy">
+          <span class="section-label">ÁREA DO ATLETA</span>
+          <h2>CRIE SUA <em>FOTO DO ATLETA</em></h2>
+          <p>
+            Personalize sua foto com a moldura oficial do Itaitinga MTB Race
+            e compartilhe que você vai encarar esse desafio.
+          </p>
+        </div>
+
+        <a class="btn btn-primary"
+           href="foto-atleta/index.html"
+           target="_blank"
+           rel="noopener">
+          CRIAR MINHA FOTO <span>→</span>
+        </a>
       </div>
     </div>
   </section>
@@ -179,7 +330,9 @@
     </div>
   </section>
 
-  <!-- INSCRIÇÃO -->
+
+
+<!-- INSCRIÇÃO -->
   <section class="registration-section" id="inscricoes">
     <div class="container registration-layout">
       <div class="registration-intro reveal">
@@ -205,17 +358,17 @@
         <div class="form-grid">
           <div class="form-group full">
             <label for="nome">Nome completo *</label>
-            <input id="nome" name="nome" placeholder="Digite seu nome completo" required type="text"/>
+            <input id="nome" name="nome" autocomplete="name" placeholder="Digite seu nome completo" required type="text"/>
           </div>
 
           <div class="form-group">
             <label for="cpf">CPF *</label>
-            <input id="cpf" maxlength="14" name="cpf" placeholder="000.000.000-00" required type="text"/>
+            <input id="cpf" maxlength="14" name="cpf" autocomplete="off" inputmode="numeric" placeholder="000.000.000-00" required type="text"/>
           </div>
 
           <div class="form-group">
             <label for="dataNascimento">Data de nascimento *</label>
-            <input id="dataNascimento" name="dataNascimento" required type="date"/>
+            <input id="dataNascimento" name="dataNascimento" autocomplete="bday" required type="date"/>
           </div>
 
           <div class="form-group">
@@ -248,12 +401,12 @@
 
           <div class="form-group">
             <label for="email">E-mail *</label>
-            <input id="email" name="email" placeholder="seuemail@email.com" required type="email"/>
+            <input id="email" name="email" autocomplete="email" placeholder="seuemail@email.com" required type="email"/>
           </div>
 
           <div class="form-group">
             <label for="telefone">WhatsApp *</label>
-            <input id="telefone" name="telefone" placeholder="(85) 9 9999-9999" required type="tel"/>
+            <input id="telefone" name="telefone" autocomplete="tel" inputmode="tel" placeholder="(85) 9 9999-9999" required type="tel"/>
           </div>
 
           <div class="form-group">
@@ -273,11 +426,20 @@
             <input id="valor" name="valor" readonly type="text" value="R$ 0,00"/>
           </div>
 
+          <div class="form-group full registration-documents" id="documentosCategoria" hidden>
+            <div class="registration-documents-head">
+              <span>DOCUMENTOS OBRIGATÓRIOS</span>
+              <small>Envie todos os documentos solicitados para concluir sua inscrição.</small>
+            </div>
+            <div id="documentosCategoriaLista" class="registration-documents-list"></div>
+            <p class="registration-documents-note">Formatos aceitos: PDF, JPG, PNG ou WEBP • máximo de 5 MB por arquivo.</p>
+          </div>
+
           <div class="form-check full">
             <input id="termos" name="termos" required type="checkbox"/>
             <label for="termos">
               Declaro que as informações preenchidas são verdadeiras e
-              concordo com o regulamento da prova. *
+              concordo com o <button class="rules-inline-link" type="button" data-open-rules>regulamento da prova</button>. *
             </label>
           </div>
         </div>
@@ -296,31 +458,233 @@
   </section>
 
 </main>
+<!-- RODAPÉ -->
+<footer class="site-footer">
 
-<footer class="site-footer" id="contato">
-  <div class="container footer-grid">
+  <div class="container footer-main">
+
     <div class="footer-brand">
-      <img alt="Itaitinga MTB Race" src="assets/logo-itaitinga-mtb.png"/>
+
+      <img
+        src="assets/logo-itaitinga-mtb.png"
+        alt="Itaitinga MTB Race"
+      >
+
       <p>
-        Pedale. Supere. Conquiste.<br/>
-        Nos vemos na trilha!
+        Corra. Supere. Conquiste.
+        Uma experiência de mountain bike em Itaitinga - Ceará.
       </p>
+
     </div>
 
-    <div>
-      <span class="footer-title">EVENTO</span>
-      <strong>Itaitinga MTB Race</strong>
-      <p>Itaitinga - Ceará</p>
+
+    <div class="footer-event">
+
+      <small>PRÓXIMO DESAFIO</small>
+
+      <strong>
+        01 NOV 2026
+      </strong>
+
+      <span>
+        ITAITINGA • CEARÁ
+      </span>
+
     </div>
+
+
+    <div class="footer-actions">
+
+      <a
+        href="#inscricoes"
+        class="btn btn-primary js-open-registration"
+      >
+        FAZER INSCRIÇÃO
+        <span>→</span>
+      </a>
+
+      <a
+        href="#consulta-inscricao"
+        class="footer-consult-link js-open-consultation"
+      >
+        CONSULTAR INSCRIÇÃO →
+      </a>
+
+    </div>
+
   </div>
+
+
+  <div class="footer-slogan">
+
+    <div class="container">
+
+      <span>CORRA</span>
+      <i>•</i>
+
+      <span>SUPERE</span>
+      <i>•</i>
+
+      <span>CONQUISTE</span>
+
+    </div>
+
+  </div>
+
 
   <div class="footer-bottom">
+
     <div class="container">
-      <span>© 2026 Itaitinga MTB Race - Todos os direitos reservados.</span>
-      <span>PEDALE • SUPERE • CONQUISTE</span>
+
+      <span>
+        © 2026 Itaitinga MTB Race
+      </span>
+
+      <span>
+        Todos os direitos reservados.
+      </span>
+
+    </div>
+
+  </div>
+
+</footer>
+
+<!-- MODAL - REGULAMENTO PRELIMINAR -->
+<div class="rules-modal" id="modalRegulamento" hidden>
+  <div class="rules-modal-overlay" data-close-rules></div>
+
+  <div class="rules-modal-card" role="dialog" aria-modal="true" aria-labelledby="rulesModalTitle">
+    <div class="rules-modal-header">
+      <div>
+        <span>VERSÃO PRELIMINAR • v0.1</span>
+        <h2 id="rulesModalTitle">REGULAMENTO — ITAITINGA MTB RACE — XCP 2026</h2>
+      </div>
+      <button class="rules-modal-close" type="button" aria-label="Fechar regulamento" data-close-rules>×</button>
+    </div>
+
+    <div class="rules-modal-body">
+        <p id="regulamentoConfiguravel" style="white-space:pre-line"></p>
+      <div class="rules-alert">
+        <strong>DOCUMENTO PRELIMINAR</strong>
+        <p>
+          Este regulamento reúne as informações e regras já definidas para o
+          Itaitinga MTB Race — XCP 2026. Alguns detalhes organizacionais ainda estão
+          em definição e poderão ser atualizados antes da publicação da versão oficial.
+        </p>
+      </div>
+
+      <article class="rules-content">
+        <h3>1. DO EVENTO</h3>
+        <p>O Itaitinga MTB Race — XCP 2026 é um evento esportivo de mountain bike no formato XCP, destinado a incentivar a prática esportiva, a superação pessoal, a integração entre os participantes e o contato com a natureza.</p>
+        <p>A prova será realizada em Itaitinga, Ceará, no dia <strong>01 de novembro de 2026</strong>, com largada prevista para as <strong>08h00</strong>, e contará com percurso aproximado de <strong>50 km</strong>.</p>
+        <p>O percurso poderá apresentar terrenos irregulares, trilhas, aclives, declives, obstáculos naturais e demais características próprias de uma prova de Mountain Bike.</p>
+
+        <h3>2. DA PROGRAMAÇÃO</h3>
+        <p>A programação prevista é: abertura às 06h00, briefing às 07h30, largada às 08h00 e premiação às 12h00.</p>
+        <p>A programação poderá ser alterada quando necessário por questões operacionais ou de segurança.</p>
+
+        <h3>3. DAS INSCRIÇÕES</h3>
+        <p>As inscrições terão início previsto para <strong>07 de setembro de 2026</strong> e serão realizadas através do canal oficial disponibilizado pela organização.</p>
+        <p>As inscrições poderão ser divididas em lotes, com valores, períodos e quantidade de vagas definidos e divulgados pela organização. A inscrição será considerada efetivada após a confirmação do pagamento, exceto nos casos autorizados pela organização.</p>
+        <p>O participante é responsável pela veracidade das informações fornecidas no cadastro.</p>
+
+        <h3>4. DAS VAGAS</h3>
+        <p>O limite de participantes será definido pela organização. As inscrições poderão ser encerradas antecipadamente caso o limite estabelecido seja atingido.</p>
+
+        <h3>5. DA PARTICIPAÇÃO</h3>
+        <p>A participação terá <strong>idade livre</strong>, observadas as regras específicas aplicáveis aos menores de 18 anos. A forma de autorização e acompanhamento de menores será detalhada na versão oficial do regulamento.</p>
+        <p>O participante declara estar em condições adequadas para realizar a prova e deverá avaliar suas próprias condições físicas antes de participar.</p>
+
+        <h3>6. DAS CATEGORIAS</h3>
+        <p>A faixa etária será <strong>livre</strong>. As categorias previstas são Elite Masculino/Feminino, Master Masculino/Feminino, Duplas Masculina e Duplas Mista. Critérios complementares serão divulgados pela organização.</p>
+
+        <h3>7. DO KIT DO ATLETA</h3>
+        <p>O conteúdo do kit, bem como data, horário, local e regras para retirada, será divulgado posteriormente pelos canais oficiais do evento.</p>
+
+        <h3>8. DA IDENTIFICAÇÃO DO ATLETA</h3>
+        <p>O participante deverá utilizar corretamente a identificação oficial fornecida pela organização. A identificação não poderá ser adulterada, reproduzida ou utilizada por outro participante.</p>
+
+        <h3>9. DOS PERCURSOS</h3>
+        <p>O evento contará com percurso aproximado de 50 km. A quilometragem poderá apresentar pequena variação em razão das características naturais do terreno e da definição final do trajeto.</p>
+        <p>O participante deverá seguir a sinalização e permanecer no percurso oficial. Cortar caminho ou abandonar propositalmente o trajeto demarcado poderá resultar em desclassificação.</p>
+
+        <h3>10. DA SEGURANÇA</h3>
+        <p>Por se tratar de prova em ambiente de trilha, poderão existir pedras, raízes, areia, lama, vegetação, buracos, desníveis, subidas, descidas e outros obstáculos naturais. Os participantes deverão respeitar as orientações da organização, fiscais e equipe de apoio.</p>
+
+        <h3>11. DA HIDRATAÇÃO</h3>
+        <p>Os pontos de hidratação e sua distribuição serão definidos conforme o planejamento final dos percurso e divulgados pela organização.</p>
+
+        <h3>12. DA CONDUTA</h3>
+        <p>Os participantes deverão respeitar os demais atletas, organização, voluntários, moradores, propriedades e o meio ambiente. É proibido abandonar lixo no percurso.</p>
+        <p>Fraude, agressão, atitude antidesportiva, alteração de identificação, corte intencional do percurso ou desrespeito grave às orientações da organização poderão resultar em desclassificação.</p>
+
+        <h3>13. DO ABANDONO DA PROVA</h3>
+        <p>O participante que decidir abandonar a prova deverá, sempre que possível, comunicar sua desistência à organização ou ao ponto de apoio mais próximo.</p>
+
+        <h3>14. DA CLASSIFICAÇÃO E DOS RESULTADOS</h3>
+        <p>O sistema de cronometragem, os critérios finais de classificação e o procedimento para eventuais contestações serão divulgados na versão oficial.</p>
+
+        <h3>15. DA PREMIAÇÃO</h3>
+        <p>As regras de premiação, colocações contempladas, troféus, medalhas e demais reconhecimentos ainda estão em definição e serão divulgadas antes da realização do evento.</p>
+
+        <h3>16. DO CANCELAMENTO E DA TRANSFERÊNCIA</h3>
+        <p>As regras para cancelamento, transferência de titularidade e eventual reembolso serão definidas e publicadas pela organização, observada a legislação aplicável.</p>
+
+        <h3>17. DE ALTERAÇÕES DO EVENTO</h3>
+        <p>A organização poderá alterar percurso, horários, programação ou outras características quando necessário para preservar a segurança dos participantes ou diante de circunstâncias alheias ao seu controle.</p>
+
+        <h3>18. DO USO DE IMAGEM</h3>
+        <p>Durante o evento poderão ser realizados registros fotográficos e audiovisuais. A utilização desses registros pela organização observará a legislação aplicável.</p>
+
+        <h3>19. DA RESPONSABILIDADE DO PARTICIPANTE</h3>
+        <p>Ao realizar sua inscrição, o participante declara ter conhecimento das características de uma prova de Mountain Bike e compromete-se a respeitar o regulamento vigente e as orientações da organização.</p>
+        <p>As disposições deste regulamento não excluem as responsabilidades legais atribuídas à organização do evento.</p>
+
+        <h3>20. DAS DISPOSIÇÕES FINAIS</h3>
+        <p>Esta é uma <strong>versão preliminar</strong>. Informações ainda não definidas serão incorporadas por meio de atualização deste documento.</p>
+        <p>Os casos não previstos serão analisados pela organização, respeitando a legislação aplicável e os princípios de segurança, razoabilidade e igualdade entre os participantes.</p>
+      </article>
+    </div>
+
+    <div class="rules-modal-footer">
+      <span>Última versão: setembro de 2026</span>
+      <button class="btn btn-primary" type="button" data-close-rules>ENTENDI</button>
     </div>
   </div>
-</footer>
+</div>
+
+<script>
+(() => {
+  const modal = document.getElementById("modalRegulamento");
+  if (!modal) return;
+
+  const openRules = () => {
+    modal.hidden = false;
+    document.body.classList.add("rules-modal-open");
+    const closeButton = modal.querySelector(".rules-modal-close");
+    if (closeButton) closeButton.focus();
+  };
+
+  const closeRules = () => {
+    modal.hidden = true;
+    document.body.classList.remove("rules-modal-open");
+  };
+
+  document.querySelectorAll("[data-open-rules]").forEach((button) => {
+    button.addEventListener("click", openRules);
+  });
+
+  modal.querySelectorAll("[data-close-rules]").forEach((button) => {
+    button.addEventListener("click", closeRules);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !modal.hidden) closeRules();
+  });
+})();
+</script>
+
 <!-- MODAL - INSCRIÇÃO REALIZADA -->
 <div id="modalInscricaoSucesso" class="success-modal" hidden>
 
@@ -355,6 +719,71 @@
   </div>
 
 </div>
-<script src="js/main.js"></script>
+<script src="js/evento-config.js"></script>
+<script src="js/main.js?v=docs4"></script>
+
+<script>
+(() => {
+  const cfg = window.EVENTO_CONFIG || {};
+  let raceDate = new Date(`${cfg.dataEvento || "2026-11-01"}T${cfg.horario || "08:00"}:00-03:00`);
+
+  const countdown = document.getElementById("raceCountdown");
+  const liveMessage = document.getElementById("raceCountdownLive");
+  const daysEl = document.getElementById("countdownDays");
+  const hoursEl = document.getElementById("countdownHours");
+  const minutesEl = document.getElementById("countdownMinutes");
+  const secondsEl = document.getElementById("countdownSeconds");
+
+  if (!countdown || !liveMessage || !daysEl || !hoursEl || !minutesEl || !secondsEl) return;
+
+  const pad = (value) => String(value).padStart(2, "0");
+
+  const updateCountdown = () => {
+    const now = new Date();
+    const distance = raceDate.getTime() - now.getTime();
+
+    if (distance <= 0) {
+      countdown.classList.add("race-started");
+      liveMessage.hidden = false;
+
+      const grid = countdown.querySelector(".race-countdown-grid");
+      const heading = countdown.querySelector(".race-countdown-heading");
+
+      if (grid) grid.hidden = true;
+      if (heading) heading.hidden = true;
+
+      return false;
+    }
+
+    const totalSeconds = Math.floor(distance / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    daysEl.textContent = pad(days);
+    hoursEl.textContent = pad(hours);
+    minutesEl.textContent = pad(minutes);
+    secondsEl.textContent = pad(seconds);
+
+    return true;
+  };
+
+  window.addEventListener("evento-config-carregado", (event) => {
+    const c = event.detail || {};
+    if (c.dataEvento) {
+      raceDate = new Date(`${c.dataEvento}T${c.horario || "08:00"}:00-03:00`);
+      updateCountdown();
+    }
+  });
+
+  if (updateCountdown()) {
+    const timer = setInterval(() => {
+      if (!updateCountdown()) clearInterval(timer);
+    }, 1000);
+  }
+})();
+</script>
+
 </body>
 </html>

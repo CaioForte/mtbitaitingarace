@@ -7,10 +7,12 @@ const GOOGLE_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbzBL3zWUZLpSDvR_Oomuk50_3YkfEWb_WlwhALZAO1d3BbXOvPAE64gHwZ8SiTVAyHf/exec";
 
 const WHATSAPP_INSCRICOES = "5585991680867";
+const EVENTO = "MTB2026";
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  carregarConfiguracaoSitePublico_();
+  // Será ativado quando a nova configuração pública for adicionada ao painel.
+  // carregarConfiguracaoSitePublico_();
 
   const EVENT_DATE = "2026-11-01T08:00:00-03:00";
 
@@ -409,6 +411,156 @@ const nascimentoInput =
 let loteVigente = null;
 let categoriasDisponiveis = [];
 
+const documentosCategoriaContainer =
+  document.getElementById("documentosCategoria");
+
+const documentosCategoriaLista =
+  document.getElementById("documentosCategoriaLista");
+
+const ROTULOS_DOCUMENTOS = {
+  RG: "RG",
+  CPF: "CPF",
+  CERTIDAO: "Certidão",
+  COMPROVANTE_RESIDENCIA: "Comprovante de residência"
+};
+
+function normalizarDocumentosObrigatorios(valor) {
+  if (Array.isArray(valor)) {
+    return [...new Set(valor.map(v => String(v || "").trim().toUpperCase()).filter(v => ROTULOS_DOCUMENTOS[v]))];
+  }
+
+  return [...new Set(
+    String(valor || "")
+      .split("|")
+      .map(v => v.trim().toUpperCase())
+      .filter(v => ROTULOS_DOCUMENTOS[v])
+  )];
+}
+
+function obterCategoriaSelecionada() {
+  const nome = String(categoriaSelect?.value || "").trim().toLowerCase();
+  if (!nome) return null;
+
+  return categoriasDisponiveis.find(categoria => {
+    const categoriaNome = String(
+      obterValor(categoria, "nome", "categoria", "descricao") || ""
+    ).trim().toLowerCase();
+    return categoriaNome === nome;
+  }) || null;
+}
+
+function renderizarDocumentosCategoria() {
+  if (!documentosCategoriaContainer || !documentosCategoriaLista) return;
+
+  const categoria = obterCategoriaSelecionada();
+  const documentos = normalizarDocumentosObrigatorios(
+    categoria?.documentosObrigatorios || categoria?.documentos_obrigatorios || []
+  );
+
+  documentosCategoriaLista.innerHTML = "";
+
+  if (!documentos.length) {
+    documentosCategoriaContainer.hidden = true;
+    return;
+  }
+
+  documentos.forEach(tipo => {
+    const grupo = document.createElement("label");
+    grupo.className = "registration-document-item";
+
+    const titulo = document.createElement("span");
+    titulo.className = "registration-document-label";
+    titulo.innerHTML = `${ROTULOS_DOCUMENTOS[tipo]} <span class="required-mark">*</span>`;
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp";
+    input.required = true;
+    input.dataset.documentoTipo = tipo;
+    input.setAttribute("aria-label", ROTULOS_DOCUMENTOS[tipo]);
+
+    const status = document.createElement("small");
+    status.className = "registration-document-status";
+    status.textContent = "Nenhum arquivo selecionado";
+
+    input.addEventListener("change", () => {
+      const arquivo = input.files?.[0];
+      if (!arquivo) {
+        status.textContent = "Nenhum arquivo selecionado";
+        grupo.classList.remove("has-file");
+        return;
+      }
+
+      if (arquivo.size > 5 * 1024 * 1024) {
+        input.value = "";
+        status.textContent = "Arquivo acima de 5 MB";
+        grupo.classList.remove("has-file");
+        alert(`${ROTULOS_DOCUMENTOS[tipo]}: o arquivo deve ter no máximo 5 MB.`);
+        return;
+      }
+
+      const tiposPermitidos = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+      if (!tiposPermitidos.includes(arquivo.type)) {
+        input.value = "";
+        status.textContent = "Formato não permitido";
+        grupo.classList.remove("has-file");
+        alert(`${ROTULOS_DOCUMENTOS[tipo]}: envie PDF, JPG, PNG ou WEBP.`);
+        return;
+      }
+
+      status.textContent = `✓ ${arquivo.name}`;
+      grupo.classList.add("has-file");
+    });
+
+    grupo.append(titulo, input, status);
+    documentosCategoriaLista.appendChild(grupo);
+  });
+
+  documentosCategoriaContainer.hidden = false;
+}
+
+function arquivoParaBase64(arquivo) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const resultado = String(reader.result || "");
+      resolve(resultado.includes(",") ? resultado.split(",").pop() : resultado);
+    };
+    reader.onerror = () => reject(new Error("Não foi possível ler um dos documentos selecionados."));
+    reader.readAsDataURL(arquivo);
+  });
+}
+
+async function prepararDocumentosObrigatorios() {
+  const inputs = Array.from(
+    documentosCategoriaLista?.querySelectorAll("input[data-documento-tipo]") || []
+  );
+
+  const documentos = [];
+
+  for (const input of inputs) {
+    const arquivo = input.files?.[0];
+    const tipo = input.dataset.documentoTipo;
+
+    if (!arquivo) {
+      throw new Error(`Anexe o documento obrigatório: ${ROTULOS_DOCUMENTOS[tipo] || tipo}.`);
+    }
+
+    if (arquivo.size > 5 * 1024 * 1024) {
+      throw new Error(`${ROTULOS_DOCUMENTOS[tipo] || tipo}: o arquivo deve ter no máximo 5 MB.`);
+    }
+
+    documentos.push({
+      tipo,
+      nome: arquivo.name,
+      mimeType: arquivo.type,
+      arquivoBase64: await arquivoParaBase64(arquivo)
+    });
+  }
+
+  return documentos;
+}
+
 
 // ----------------------------------------------------------
 // CALCULAR IDADE
@@ -472,8 +624,11 @@ async function carregarLoteVigente() {
     const response =
       await fetch(
         GOOGLE_SCRIPT_URL +
-        "?action=publicLoteVigente&_=" +
-        Date.now(),
+"?action=publicLoteVigente" +
+"&evento=" +
+encodeURIComponent(EVENTO) +
+"&_=" +
+Date.now(),
         {
           method: "GET",
           cache: "no-store"
@@ -612,8 +767,11 @@ async function carregarCategorias() {
     const response =
       await fetch(
         GOOGLE_SCRIPT_URL +
-        "?action=publicCategorias&_=" +
-        Date.now(),
+"?action=publicCategorias" +
+"&evento=" +
+encodeURIComponent(EVENTO) +
+"&_=" +
+Date.now(),
         {
           method: "GET",
           cache: "no-store"
@@ -765,6 +923,11 @@ function atualizarCategoriasPorIdade() {
       option.textContent =
         nome;
 
+      option.dataset.documentosObrigatorios =
+        normalizarDocumentosObrigatorios(
+          categoria.documentosObrigatorios || categoria.documentos_obrigatorios || []
+        ).join("|");
+
       categoriaSelect.appendChild(
         option
       );
@@ -786,7 +949,15 @@ function atualizarCategoriasPorIdade() {
     categoriaSelect.innerHTML =
       '<option value="">Nenhuma categoria disponível para sua idade</option>';
   }
+
+  renderizarDocumentosCategoria();
 }
+
+
+categoriaSelect?.addEventListener(
+  "change",
+  renderizarDocumentosCategoria
+);
 
 
 // ----------------------------------------------------------
@@ -988,6 +1159,31 @@ carregarDadosFormulario();
   // FORMULÁRIO DE INSCRIÇÃO
   // ----------------------------------------------------------
 
+  let processingOverlay = null;
+
+  function mostrarProcessamentoInscricao() {
+    if (!processingOverlay) {
+      processingOverlay = document.createElement("div");
+      processingOverlay.className = "registration-processing-overlay";
+      processingOverlay.setAttribute("role", "status");
+      processingOverlay.setAttribute("aria-live", "polite");
+      processingOverlay.innerHTML = `
+        <div class="registration-processing-card">
+          <div class="registration-processing-spinner" aria-hidden="true"></div>
+          <strong>Processando sua inscrição</strong>
+          <span>Aguarde enquanto registramos seus dados e preparamos o pagamento.</span>
+        </div>`;
+      document.body.appendChild(processingOverlay);
+    }
+    requestAnimationFrame(() => processingOverlay.classList.add("is-visible"));
+    document.body.setAttribute("aria-busy", "true");
+  }
+
+  function ocultarProcessamentoInscricao() {
+    processingOverlay?.classList.remove("is-visible");
+    document.body.removeAttribute("aria-busy");
+  }
+
   const registrationForm =
     document.getElementById(
       "form-inscricao"
@@ -1079,6 +1275,16 @@ carregarDadosFormulario();
           return;
         }
 
+        let documentosObrigatorios = [];
+
+        try {
+          documentosObrigatorios =
+            await prepararDocumentosObrigatorios();
+        } catch (erroDocumento) {
+          alert(erroDocumento.message);
+          return;
+        }
+
         // ----------------------------------------------
         // LIMPA MENSAGEM ANTERIOR
         // ----------------------------------------------
@@ -1100,9 +1306,10 @@ carregarDadosFormulario();
         if (submitButton) {
 
           submitButton.disabled = true;
-
+          submitButton.classList.add("is-processing");
           submitButton.innerHTML =
-            "ENVIANDO...";
+            '<span class="submit-spinner" aria-hidden="true"></span> PROCESSANDO INSCRIÇÃO...';
+          mostrarProcessamentoInscricao();
         }
 
         // ----------------------------------------------
@@ -1167,6 +1374,7 @@ carregarDadosFormulario();
 
           const payload = {
   action: "publicCadastrar",
+  evento: EVENTO,
 
   nome: dados.nome,
   cpf: dados.cpf,
@@ -1178,7 +1386,8 @@ carregarDadosFormulario();
   estado: dados.estado,
   cidade: dados.cidade,
   pcd: dados.pcd,
-  equipe: dados.equipe
+  equipe: dados.equipe,
+  documentos: documentosObrigatorios
 };
 
           const response =
@@ -1576,10 +1785,13 @@ if (formSuccess) {
           // RESTAURA BOTÃO
           // --------------------------------------------
 
+          ocultarProcessamentoInscricao();
+
           if (submitButton) {
 
             submitButton.disabled =
               false;
+            submitButton.classList.remove("is-processing");
 
             submitButton.innerHTML =
               originalText;
@@ -2502,12 +2714,14 @@ if (consultaForm) {
       try {
 
         const url =
-          GOOGLE_SCRIPT_URL +
-          "?action=publicConsultar" +
-          "&cpf=" +
-          encodeURIComponent(cpf) +
-          "&_=" +
-          Date.now();
+  GOOGLE_SCRIPT_URL +
+  "?action=publicConsultar" +
+  "&cpf=" +
+  encodeURIComponent(cpf) +
+  "&evento=" +
+  encodeURIComponent(EVENTO) +
+  "&_=" +
+  Date.now();
 
         const response =
           await fetch(

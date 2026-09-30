@@ -1,0 +1,15 @@
+ITAITINGA MTB RACE — SITE MODERNIZADO
+
+Esta versão usa a estrutura mais recente do Itaitinga Trail Run como base visual e funcional,
+mantendo o evento MTB separado (EVENTO = MTB2026).
+
+Principais mudanças:
+- formulário com as validações mais recentes;
+- documentos obrigatórios por categoria quando configurados pelo backend;
+- bloqueio contra duplo envio e feedback de processamento;
+- layout público mais enxuto;
+- contagem regressiva e informações principais do evento;
+- identidade e dados do MTB Race preservados.
+
+Antes de publicar, valide uma inscrição de teste e o fluxo de pagamento no ambiente atual.
+test
