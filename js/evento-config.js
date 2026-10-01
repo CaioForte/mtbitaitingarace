@@ -28,6 +28,7 @@
       heroLinhaSuperior: cfg.heroLinhaSuperior || `${modalidade} ${ano} • ${tipo.toUpperCase()}`,
       heroTitulo: cfg.heroTitulo || 'SUPERE SEUS LIMITES.',
       heroDestaque: cfg.heroDestaque || 'VIVA ESSA AVENTURA!',
+      heroDescricao: cfg.heroDescricao || 'Uma experiência de MTB para quem gosta de desafio, trilha, velocidade e superação.',
       tipoProva: tipo,
       siglaTipo: cfg.siglaTipo || 'MTB',
       edicaoModalidade: cfg.edicaoModalidade || `${modalidade} ${ano}`,
